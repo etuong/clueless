@@ -2,12 +2,16 @@
   "name": "clueless",
   "version": "0.1.0",
   "private": true,
+  "devDependencies": {
+    "@types/react": "^16.9.2",
+    "@types/react-dom": "^16.9.0"
+  },
   "dependencies": {
     "glamor": "^2.20.40",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-icons": "^3.7.0",
-    "react-scripts": "3.1.1",
+    "react-scripts": "3.1.2",
     "typescript": "^3.6.2"
   },
   "scripts": {
@@ -26,13 +30,7 @@
       "not op_mini all"
     ],
     "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
+      "last 1 chrome version"
     ]
-  },
-  "devDependencies": {
-    "@types/react": "^16.9.2",
-    "@types/react-dom": "^16.9.0"
   }
 }
