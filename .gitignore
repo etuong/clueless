@@ -27,6 +27,9 @@ yarn-error.log*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 
+#python
+__pycache__/
+
 
 # Environments
 .env
