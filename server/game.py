@@ -1,64 +1,74 @@
 import numpy as np
 
-# Indicates whether hallway is occupied
-INITIAL_HALLWAY_STATE = {
-    'study-hall': False,
-    'study-library': False,
-    'hall-lounge': False,
-    'hall-billiard': False,
-    'lounge-dining': False,
-    'library-billiard': False,
-    'library-conservatory': False,
-    'billiard-dining': False,
-    'billiard-ball': False,
-    'dining-kitchen': False,
-    'conservatory-ball': False,
-    'ball-kitchen': False
+# Indicates whether hallway is free
+HALLWAY_STATE = {
+    'study-hall': True,
+    'study-library': True,
+    'hall-lounge': True,
+    'hall-billiard room': True,
+    'lounge-dining room': True,
+    'library-billiard room': True,
+    'library-conservatory': True,
+    'billiard room-dining room': True,
+    'billiard room-ballroom': True,
+    'dining room-kitchen': True,
+    'conservatory-ballroom': True,
+    'ballroom-kitchen': True
 }
 
 INITIAL_PLAYER_LOCATIONS = {
     'miss scarlet': 'hall-lounge',
     'professor plum': 'study-library',
-    'colonel mustard': 'lounge-dining',
+    'colonel mustard': 'lounge-dining room',
     'mrs peacock': 'library-conservatory',
-    'mr green': 'conservatory-ball',
-    'mrs white': 'ball-kitchen'
+    'mr green': 'conservatory-ballroom',
+    'mrs white': 'ballroom-kitchen'
 }
 
 
 class CluelessGame:
     def __init__(self):
         self.rooms = dict()
-        self.rooms['study'] = Room('study', (2,2), 'kitchen')
-        self.rooms['hall'] = Room('hall', None, None)
-        self.rooms['lounge'] = Room('lounge', (2,0), 'conservatory')
-        self.rooms['library'] = Room('library', None, None)
-        self.rooms['billiard room'] = Room('billiard room', None, None)
-        self.rooms['dining room'] = Room('dining room', None, None)
-        self.rooms['conservatory'] = Room('conservatory', (0,2), 'lounge')
-        self.rooms['ballroom'] = Room('ballroom', None, None)
-        self.rooms['kitchen'] = Room('kitchen', (0,0), 'study')   
+        self.rooms['study'] = Room('study', 'kitchen', ['study-library', 'study-hall'])
+        self.rooms['hall'] = Room('hall', None, ['hall-billiard room', 'hall-lounge', 'study-hall'])
+        self.rooms['lounge'] = Room('lounge', 'conservatory', ['lounge-dining room', 'hall-lounge'])
+        self.rooms['library'] = Room('library', None, ['study-library', 'library-conservatory', 'library-billiard room'])
+        self.rooms['billiard room'] = Room('billiard room', None,
+                                           ['hall-billiard room', 'billiard room-ballroom', 'library-billiard room', 'billiard room-dining room'])
+        self.rooms['dining room'] = Room('dining room', None, ['lounge-dining room', 'dining room-kitchen', 'billiard room-diningroom'])
+        self.rooms['conservatory'] = Room('conservatory', 'lounge', ['library-conservatory', 'conservatory-ballroom'])
+        self.rooms['ballroom'] = Room('ballroom', None, ['billiard room-ballroom', 'conservatory-ballroom', 'ballroom-kitchen'])
+        self.rooms['kitchen'] = Room('kitchen', 'study', ['dining room-kitchen', 'ballroom-kitchen']) 
 
-        self.hallways = INITIAL_HALLWAY_STATE
+        self.hallways = HALLWAY_STATE
         self.players = dict()
 
     def create_player(self, player_name, character_name):
         self.players[player_name] = Player(player_name, character_name, 
-                                            INITIAL_PLAYER_LOCATIONS.get(character_name), None)
+                                            INITIAL_PLAYER_LOCATIONS.get(character_name))
         return self.players[player_name]
 
 
 class Room:
-    def __init__(self, name, secret_passage_location, secret_passage_connection):
+    def __init__(self, name, secret_passage_connection, hallways):
         self.name = name
         self.space = np.zeros((3,3))
-        self.secret_passage_location = secret_passage_location
         self.secret_passage_connection = secret_passage_connection
+        self.hallways = hallways
 
+    def get_move_options(self):
+        move_options = [*self.hallways]
+        
+        if self.secret_passage_connection:
+            move_options.append(self.secret_passage_connection)
 
+        return dict(options=move_options)
+  
 class Player:
-    def __init__(self, player_name, character_name, room_hall, room_location):
+    def __init__(self, player_name, character_name, room_hall):
         self.player_name = player_name
         self.character_name = character_name       
         self.room_hall = room_hall
-        self.room_location = room_location
+
+    def move(self, room_or_hall):
+        self.room_hall = room_or_hall
