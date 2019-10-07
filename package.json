@@ -26,8 +26,8 @@
     "typescript": "^3.6.2"
   },
   "scripts": {
-    "start": "webpack-dev-server --mode development --config client/webpack.config.js",
-    "build": "webpack --mode production",
+    "start": "webpack-dev-server --open --config client/webpack.dev.config.js",
+    "build": "rm -rf client/dist && NODE_ENV=production webpack --config client/webpack.prod.config.js",
     "fly": "react-scripts start",
     "test": "react-scripts test"
   },
