@@ -1,10 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_restful import Api, Resource, reqparse
+from flask_cors import CORS
 import game
+import os
 
 # EB looks for an 'application' callable by default.
-application = Flask(__name__)
+application = Flask(__name__, static_url_path = "")
 api = Api(application)
+CORS(application)
 
 game = game.CluelessGame()
 
@@ -81,10 +84,18 @@ class PlayerMoveApi(Resource):
         else:
             return dict(error="Unacceptable Location Selected")
 
+class TestApi(Resource):
+
+    def get(self, player_name):
+        string = "hi " + player_name + ", I am in server/application.py!"
+        print(string)
+        return jsonify( { 'response': string} )
+
+api.add_resource(TestApi, '/api/test/<player_name>')
 api.add_resource(PlayerApi, '/api/player/<player_name>')
 api.add_resource(PlayersApi, '/api/players')
 api.add_resource(PlayerMoveApi, '/api/player/move/<player_name>')
 
 if __name__ == "__main__":
     application.debug = True
-    application.run()
+    application.run(host='0.0.0.0', port=os.environ.get('PORT', 8080), debug=True)

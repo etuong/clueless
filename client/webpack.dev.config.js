@@ -13,9 +13,8 @@ module.exports = {
     contentBase: path.resolve(__dirname, ''),
     historyApiFallback: true,
     proxy: {
-      '/api/*': 'http://localhost:8080',
-      '/ws/*': 'http://localhost:8080'
-    }
+      '/api/*': 'http://localhost:8080'
+    },
   },
 
   node: {
