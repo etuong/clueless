@@ -5,8 +5,9 @@ import pika
 exchange_name='logs'
 
 # Open a connection with localhost
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
-
+credentials = pika.PlainCredentials('clueless', 'clueless')
+connection = pika.BlockingConnection(pika.ConnectionParameters(host='ec2-34-212-20-137.us-west-2.compute.amazonaws.com',
+                                                               credentials=credentials))
 # Open a channel with exchange type as fanout
 channel = connection.channel()
 channel.exchange_declare(exchange=exchange_name, exchange_type='fanout')
