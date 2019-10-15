@@ -30,7 +30,7 @@ class NoteCell extends React.Component<NoteProps> {
 
 const styles = {
   container: {
-    borderBottom: '1px solid rgba(0, 0, 0, .15)',
+    borderBottom: '1px solid rgba(0, 0, 0, .45)',
     display: 'flex',
     alignItems: 'center',
     height: '40px'

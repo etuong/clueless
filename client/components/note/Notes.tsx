@@ -57,6 +57,7 @@ const styles = {
   container: {
     width: '360px',
     margin: '0 auto',
+    height: '50%'
   },
   title: {
     fontSize: 30,

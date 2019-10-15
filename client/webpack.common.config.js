@@ -1,47 +1,61 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  context: path.resolve(__dirname, ''),
+  context: path.resolve(__dirname, ""),
 
   resolve: {
-    extensions: ['.tsx', '.ts', '.jsx', '.js', '.png']
+    extensions: [".tsx", ".ts", ".jsx", ".js", ".png"]
   },
 
   entry: {
-    main: './index.tsx'
+    main: "./index.tsx"
   },
 
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist')
+    filename: "bundle.js",
+    path: path.resolve(__dirname, "dist")
   },
 
   module: {
-    rules: [{
-      test: /\.tsx?$/,
-      use: 'ts-loader',
-      exclude: [path.resolve(__dirname, '../node_modules')]
-    },{
-      test: /\.(js|jsx)$/,
-      use: {
-        loader: "babel-loader"
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: "ts-loader",
+        exclude: [path.resolve(__dirname, "../node_modules")]
       },
-      exclude: [path.resolve(__dirname, '../node_modules')]
-    }, {
-      test: [/\.css$/],
-      use: ["style-loader", "css-loader"]
-    }, {
-      test: /\.png$/,
-      exclude: /node_modules/,
-      use: 'file-loader'
-    },
+      {
+        test: /\.(js|jsx)$/,
+        use: {
+          loader: "babel-loader"
+        },
+        exclude: [path.resolve(__dirname, "../node_modules")]
+      },
+      {
+        test: [/\.scss$/, /\.css$/],
+        use: [
+          {
+            loader: "style-loader" 
+          },
+          {
+            loader: "css-loader" 
+          },
+          {
+            loader: "sass-loader" 
+          }
+        ]
+      },
+      {
+        test: /\.png$/,
+        exclude: /node_modules/,
+        use: "file-loader"
+      }
     ]
   },
 
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Clueless'
+      title: "Clueless"
     })
   ]
 };

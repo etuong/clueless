@@ -1,16 +1,12 @@
-import * as React from 'react';
-import './App.css';
-import Notes from './components/note/Notes';
-import Board from './components/board/Board';
-import Console from './components/console/Console';
+import * as React from "react";
+import "./App.scss";
+import Notes from "./components/note/Notes";
+import Board from "./components/board/Board";
+import Console from "./components/console/Console";
 
-interface AppProps {
+interface AppProps {}
 
-}
-
-interface AppState {
-
-}
+interface AppState {}
 
 export class App extends React.Component<AppProps, AppState> {
   constructor(props) {
@@ -21,8 +17,8 @@ export class App extends React.Component<AppProps, AppState> {
     return (
       <div className="app">
         <Board />
-        <Notes />
         <Console />
+        <Notes />       
       </div>
     );
   }
