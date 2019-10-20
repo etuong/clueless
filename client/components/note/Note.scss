@@ -1,0 +1,48 @@
+
+container {
+    width: 360px;
+    margin: 0 auto;
+    border-bottom: 1px solid #ededed;
+
+    cell-container {
+      border-bottom: '1px solid rgba(0, 0, 0, .45)',
+      display: 'flex',
+      alignItems: 'center',
+      height: '40px'
+    }
+
+    note: {
+      textAlign: 'left',
+      fontSize: 18
+    }
+
+    iconContainer: {
+      display: 'flex',
+      flex: 1,
+      justifyContent: 'flex-end',
+      alignItems: 'center'
+    }
+    
+    times: {
+      cursor: 'pointer',
+      opacity: 0.7
+    }
+  }
+
+  form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  input {
+    height: 20px;
+    width: 360px;
+    border: none;
+    outline: none;
+    margin-left: 10;
+    font-size: 20;
+    padding: 8,
+  }
+
+  

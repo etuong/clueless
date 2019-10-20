@@ -1,0 +1,20 @@
+board-row:after {
+    clear: both;
+    content: "";
+    display: table;
+  }
+
+.horizontal-hall {
+    height: 25px;
+    width: 100px;
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
+}
+
+.vertical-hall {
+    width: 25px;
+    height: 100px;
+    margin: 0 auto;
+    border-left: 2px solid black;
+    border-right: 2px solid black;
+}
