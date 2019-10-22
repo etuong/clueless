@@ -4,11 +4,7 @@ import Notes from "./components/note/Notes";
 import Board from "./components/board/Board";
 import Console from "./components/console/Console";
 
-interface AppProps {}
-
-interface AppState {}
-
-export class App extends React.Component<AppProps, AppState> {
+export default class App extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -18,10 +14,8 @@ export class App extends React.Component<AppProps, AppState> {
       <div className="app">
         <Board />
         <Console />
-        <Notes />       
+        <Notes />
       </div>
     );
   }
 }
-
-export default App;

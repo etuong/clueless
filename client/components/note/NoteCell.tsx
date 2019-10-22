@@ -1,54 +1,28 @@
-import * as React from 'react'
-import { css } from 'glamor'
-import { FaTimes } from 'react-icons/fa'
+import * as React from "react";
+import { FaTimes } from "react-icons/fa";
 
 interface NoteProps {
-  deleteNote: (id: number) => Promise<void>
-  note: string
-  id: number
+  deleteNote: (id: number) => Promise<void>;
+  note: string;
+  id: number;
 }
 
-class NoteCell extends React.Component<NoteProps> {
+export default class NoteCell extends React.Component<NoteProps> {
   render() {
     const { deleteNote, note, id } = this.props;
 
     return (
-      <div {...css(styles.container)}>
-        <p {...css(styles.note)}>{note}</p>
-        <div {...css(styles.iconContainer)}>
+      <div className="cell">
+        <p className="note">{note}</p>
+        <div className="icon-container">
           <FaTimes
             onClick={() => deleteNote(id)}
-            color='red'
+            color="red"
             size={22}
-            {...css(styles.times)}
+            className="times"
           />
         </div>
       </div>
-    )
+    );
   }
 }
-
-const styles = {
-  container: {
-    borderBottom: '1px solid rgba(0, 0, 0, .45)',
-    display: 'flex',
-    alignItems: 'center',
-    height: '40px'
-  },
-  note: {
-    textAlign: 'left',
-    fontSize: 18
-  },
-  iconContainer: {
-    display: 'flex',
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center'
-  },
-  times: {
-    cursor: 'pointer',
-    opacity: 0.7
-  }
-}
-
-export default NoteCell

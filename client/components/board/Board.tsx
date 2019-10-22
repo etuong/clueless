@@ -8,13 +8,13 @@ import kitchen from '../../assets/kitchen.png';
 import library from '../../assets/library.png';
 import lounge from '../../assets/lounge.png';
 import study from '../../assets/study.png';
-import './Board.css';
+import './Board.scss';
 
 interface BoardProps {
 
 }
 
-export class Board extends React.Component<BoardProps> {
+export default class Board extends React.Component<BoardProps> {
 
     render() {
         return (
@@ -60,6 +60,3 @@ export class Board extends React.Component<BoardProps> {
         );
     }
 }
-
-
-export default Board;

@@ -1,48 +1,49 @@
+.note-container {
+  width: 360px;
+  margin: 0 auto;
 
-container {
-    width: 360px;
-    margin: 0 auto;
-    border-bottom: 1px solid #ededed;
-
-    cell-container {
-      border-bottom: '1px solid rgba(0, 0, 0, .45)',
-      display: 'flex',
-      alignItems: 'center',
-      height: '40px'
-    }
-
-    note: {
-      textAlign: 'left',
-      fontSize: 18
-    }
-
-    iconContainer: {
-      display: 'flex',
-      flex: 1,
-      justifyContent: 'flex-end',
-      alignItems: 'center'
-    }
-    
-    times: {
-      cursor: 'pointer',
-      opacity: 0.7
-    }
+  .title {
+    font-size: 30px;
+    margin: 10px 0px;
   }
 
-  form {
+  .form {
+    border-bottom: 1px solid #ededed;
     display: flex;
     justify-content: center;
     align-items: center;
+
+    input {
+      height: 20px;
+      width: 360px;
+      border: none;
+      outline: none;
+      margin-left: 10px;
+      font-size: 16px;
+      padding: 8px;
+    }
   }
 
-  input {
-    height: 20px;
-    width: 360px;
-    border: none;
-    outline: none;
-    margin-left: 10;
-    font-size: 20;
-    padding: 8,
-  }
+  .cell {
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
 
-  
+    .note {
+      text-align: left;
+      font-size: 16px;
+    }
+
+    .icon-container {
+      display: flex;
+      flex: 1;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .times {
+      cursor: pointer;
+      opacity: 0.7;
+    }
+  }
+}

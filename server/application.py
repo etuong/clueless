@@ -84,14 +84,6 @@ class PlayerMoveApi(Resource):
         else:
             return dict(error="Unacceptable Location Selected")
 
-class TestApi(Resource):
-
-    def get(self, player_name):
-        string = "hi " + player_name + ", I am in server/application.py!"
-        print(string)
-        return jsonify( { 'response': string} )
-
-api.add_resource(TestApi, '/api/test/<player_name>')
 api.add_resource(PlayerApi, '/api/player/<player_name>')
 api.add_resource(PlayersApi, '/api/players')
 api.add_resource(PlayerMoveApi, '/api/player/move/<player_name>')

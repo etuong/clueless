@@ -1,7 +1,9 @@
 import * as React from "react";
-import { css } from "glamor";
-import { ApiClient } from "../../ApiClient";
 import Select from "react-select";
+import "./Console.scss";
+import { Weapon } from "./Weapon";
+import { Suspect } from "./Suspect";
+import { Room } from "./Room";
 
 interface ConsoleProps {}
 
@@ -9,24 +11,18 @@ interface ConsoleInterface {
   value: string;
 }
 
-class Console extends React.Component<ConsoleProps, ConsoleInterface> {
+export default class Console extends React.Component<
+  ConsoleProps,
+  ConsoleInterface
+> {
   constructor(props) {
     super(props);
     this.state = {
       value: ""
     };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleChange(event) {
-    this.setState({ value: event.target.value });
-  }
-
-  async handleSubmit(event) {
-    event.preventDefault();
-    const test = await ApiClient.get("/test/" + this.state.value);
-    alert(test.response);
+    this.handleSuspectChange = this.handleSuspectChange.bind(this);
+    this.handleRoomChange = this.handleRoomChange.bind(this);
+    this.handleWeaponChange = this.handleWeaponChange.bind(this);
   }
 
   handleSuspectChange = selectedOption => {};
@@ -35,80 +31,63 @@ class Console extends React.Component<ConsoleProps, ConsoleInterface> {
 
   handleWeaponChange = selectedOption => {};
 
+  weapons = Object.keys(Weapon).filter(item => {
+    return isNaN(Number(item));
+  });
+
+  suspects = Object.keys(Suspect).filter(item => {
+    return isNaN(Number(item));
+  });
+
+  rooms = Object.keys(Room).filter(item => {
+    return isNaN(Number(item));
+  });
+
   render() {
-    const weapons = ["Candlestick", "Knife", "Pipe", "Pistol", "Rope", "Wench"];
-    const suspects = [
-      "Miss Scarlett",
-      "Rev. Green",
-      "Colonel Mustard",
-      "Professor Plum",
-      "Mrs. Peacock",
-      "Mr. White"
-    ];
-    const rooms = [
-      "Ballroom",
-      "Billiard",
-      "Conservatory",
-      "Dining",
-      "Hall",
-      "Kitchen",
-      "Library",
-      "Lounge",
-      "Study"
-    ];
+    const customStyle = {
+      container: styles => ({ ...styles, width: "40%" })
+    };
 
     return (
-      <div {...css(styles.container)}>
-        <p {...css(styles.title)}>Console</p>
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            Name:
-            <input
-              type="text"
-              value={this.state.value}
-              onChange={this.handleChange}
-            />
-          </label>
-          <input type="submit" value="Submit" />
-        </form>
-        Suspects:
-        <Select
-          options={suspects.map(v => ({
-            label: v,
-            value: v
-          }))}
-          onChange={this.handleSuspectChange}
-        />
-        Rooms:
-        <Select
-          options={rooms.map(v => ({
-            label: v,
-            value: v
-          }))}
-          onChange={this.handleRoomChange}
-        />
-        Weapons:
-        <Select
-          options={weapons.map(v => ({
-            label: v,
-            value: v
-          }))}
-          onChange={this.handleWeaponChange}
-        />
+      <div className="console-container">
+        <p className="title">Console</p>
+        <div className="block">
+          <label>Suspects:</label>
+          <Select
+            placeholder="Select a suspect.."
+            styles={customStyle}
+            options={this.suspects.map(v => ({
+              label: Suspect[v],
+              value: v
+            }))}
+            onChange={this.handleSuspectChange}
+          />
+        </div>
+        <div className="block">
+          <label>Rooms:</label>
+          <Select
+            placeholder="Select a room.."
+            styles={customStyle}
+            options={this.rooms.map(v => ({
+              label: Room[v],
+              value: v
+            }))}
+            onChange={this.handleRoomChange}
+          />
+        </div>
+        <div className="block">
+          <label>Weapons:</label>
+          <Select
+            placeholder="Select a weapon.."
+            styles={customStyle}
+            options={this.weapons.map(v => ({
+              label: Weapon[v],
+              value: v
+            }))}
+            onChange={this.handleWeaponChange}
+          />
+        </div>
       </div>
     );
   }
 }
-
-const styles = {
-  container: {
-    width: "360px",
-    margin: "0 auto"
-  },
-  title: {
-    fontSize: 30,
-    margin: "10px 0px"
-  }
-};
-
-export default Console;
