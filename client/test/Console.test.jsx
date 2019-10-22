@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { shallow } from 'enzyme';
-import Console from '../client/components/console/Console.tsx';
+import Console from '../components/console/Console.tsx';
 
 describe('Console', () => {
     it('renders without crashing', () => {

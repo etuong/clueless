@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { shallow } from 'enzyme';
-import Board from '../client/components/board/Board.tsx';
+import Board from '../components/board/Board.tsx';
 
 describe('Board', () => {
     it('renders without crashing', () => {
