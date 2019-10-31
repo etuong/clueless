@@ -4,6 +4,7 @@ import "./Console.scss";
 import { Weapon } from "./Weapon";
 import { Suspect } from "./Suspect";
 import { Room } from "./Room";
+import { RabbitMqInterface } from "rabbitode";
 
 interface ConsoleProps {}
 
@@ -25,7 +26,32 @@ export default class Console extends React.Component<
     this.handleWeaponChange = this.handleWeaponChange.bind(this);
   }
 
-  handleSuspectChange = selectedOption => {};
+  myConnection = new RabbitMqInterface();
+  
+  componentWillMount() {
+
+    this.myConnection.setRabbitUri("amqp://localhost");
+
+    const handleConsume = channel => msg => {
+      console.log(this.myConnection.decodeToString(msg));
+      channel.ack(msg);
+    };
+
+    this.myConnection.startFanoutConsumer({
+      exchangeName: "logs",
+      exchangeType: "fanout",
+      queueName: "",
+      consumerCallback: handleConsume
+    });
+  }
+
+  handleSuspectChange = selectedOption => {
+    this.myConnection.sendFanout({
+      exchangeName: "fanout_test_exchange",
+      routingKey: ``,
+      content: `ethan this is a test`
+    });
+  };
 
   handleRoomChange = selectedOption => {};
 

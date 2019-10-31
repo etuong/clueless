@@ -17,6 +17,12 @@ module.exports = {
     path: path.resolve(__dirname, "dist")
   },
 
+  node: {
+    fs: 'empty',
+    net: 'empty',
+    tls: 'empty',
+  },
+  
   module: {
     rules: [
       {

@@ -17,10 +17,6 @@ module.exports = {
     },
   },
 
-  node: {
-    fs: 'empty'
-  },
-
   plugins: [
     ...webpack.plugins,
   ]
