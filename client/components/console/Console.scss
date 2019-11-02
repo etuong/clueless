@@ -19,5 +19,28 @@
       align-self: center;
     }
   }
+
+  .announce {
+    button {
+      margin: 0px 5px;
+    }
+  }
+
+  .output {
+    label {
+      margin-top: 20px;
+      display: block;
+      text-decoration: underline;
+      font: italic;
+    }
+
+    textarea {
+      width: 92%;
+      min-height: 250px;
+      margin: 10px 4%;
+      overflow: auto;
+      resize: vertical;
+    }
+  }
   
 }
