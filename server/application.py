@@ -16,7 +16,7 @@ class PlayerApi(Resource):
     def get(self, player_name):
         player = game.players.get(player_name)
         player_info = dict(name=player.player_name, character_name=player.character_name,
-                            room_hall=player.room_hall, room_location=player.room_location)
+                            room_hall=player.room_hall)
         return player_info
 
     def post(self, player_name):
@@ -84,9 +84,35 @@ class PlayerMoveApi(Resource):
         else:
             return dict(error="Unacceptable Location Selected")
 
+class AccusationsApi(Resource):
+    def get(self, player_name):
+        return jsonify(game.game_answer)
+
+    def post(self, player_name):
+        parser = reqparse.RequestParser()
+        parser.add_argument('accused_character')
+        parser.add_argument('accused_weapon')
+        parser.add_argument('accused_room')
+        args = parser.parse_args()
+
+        if game.players.get(player_name).room_hall != args.accused_room:
+            return jsonify(error="You must be in the room of your accusation")
+
+        for player in game.players.values():
+            if player.character_name == args.accused_character:
+                player.move(args.accused_room)
+
+        guessed_answer = (args.accused_character, args.accused_room, args.accused_weapon)
+
+        if guessed_answer == game.game_answer:
+            return {'guess': True}
+        else:
+            return {'guess': False}
+
 api.add_resource(PlayerApi, '/api/player/<player_name>')
 api.add_resource(PlayersApi, '/api/players')
 api.add_resource(PlayerMoveApi, '/api/player/move/<player_name>')
+api.add_resource(AccusationsApi, '/api/player/accusation/<player_name>')
 
 if __name__ == "__main__":
     application.debug = True

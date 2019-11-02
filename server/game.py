@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 # Indicates whether hallway is free
 HALLWAY_STATE = {
@@ -25,6 +26,28 @@ INITIAL_PLAYER_LOCATIONS = {
     'mrs white': 'ballroom-kitchen'
 }
 
+ROOMS = [
+    'study',
+    'hall',
+    'library',
+    'billiard room',
+    'lounge',
+    'dining room',
+    'library',
+    'conservatory',
+    'ballroom',
+    'kitchen'
+]
+
+WEAPONS = [
+    'pipe',
+    'knife',
+    'wrench',
+    'rope',
+    'pistol',
+    'candlestick'
+]
+
 
 class CluelessGame:
     def __init__(self):
@@ -42,6 +65,16 @@ class CluelessGame:
 
         self.hallways = HALLWAY_STATE
         self.players = dict()
+
+        self.game_answer = self.create_game_answer()
+
+
+    def create_game_answer(self):
+        character = random.choice([*INITIAL_PLAYER_LOCATIONS.keys()])
+        room = random.choice(ROOMS)
+        weapon = random.choice(WEAPONS)
+
+        return (character, room, weapon)
 
     def create_player(self, player_name, character_name):
         self.players[player_name] = Player(player_name, character_name, 

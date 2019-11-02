@@ -6,7 +6,7 @@ exchange_name='logs'
 
 # Open a connection with localhost
 credentials = pika.PlainCredentials('clueless', 'clueless')
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='ec2-34-212-20-137.us-west-2.compute.amazonaws.com',
+connection = pika.BlockingConnection(pika.ConnectionParameters(host='ec2-34-212-82-85.us-west-2.compute.amazonaws.com',
                                                                credentials=credentials))
 # Open a channel with exchange type as fanout
 channel = connection.channel()
