@@ -1,6 +1,7 @@
 .note-container {
-  width: 360px;
+  max-width: 360px;
   margin: 0 auto;
+  word-wrap: break-word;
 
   .title {
     font-size: 30px;

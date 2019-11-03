@@ -8,7 +8,7 @@ import { Room } from "./Room";
 export const Console = props => {
   const [value, setValue] = useState<string>("");
   const [weapon, setWeapon] = useState<string>("");
-  const [room, setRoom] = useState<string>("");
+  const [room] = useState<string>("");
   const [suspect, setSuspect] = useState<string>("");
 
   const io = require("socket.io-client");
@@ -26,10 +26,6 @@ export const Console = props => {
 
   const handleSuspectChange = selectedOption => {
     setSuspect(selectedOption.label);
-  };
-
-  const handleRoomChange = selectedOption => {
-    setRoom(selectedOption.label);
   };
 
   const handleWeaponChange = selectedOption => {
@@ -82,13 +78,12 @@ export const Console = props => {
       <div className="block">
         <label>Rooms:</label>
         <Select
-          placeholder="Select a room.."
+          placeholder="Readonly"
+          isDisabled={true}
           styles={customStyle}
           options={rooms.map(v => ({
-            label: Room[v],
-            value: v
+            label: Room[v]
           }))}
-          onChange={handleRoomChange}
         />
       </div>
       <div className="block">
