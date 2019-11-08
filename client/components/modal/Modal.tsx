@@ -19,12 +19,12 @@ export const Modal = props => {
   };
 
   const handlePlayerChange = selectedOption => {
-    setPlayer(selectedOption.target.label);
+    setPlayer(Suspect[selectedOption.target.value]);
   };
 
   const handleButton = () => {
-    const json = { "userName": username, "player": player };
-    ApiClient.put("/player", json);
+    const json = { "character_name": player };
+    ApiClient.post("/player/" + username, json);
     dialog!.close();
   };
 
