@@ -4,6 +4,7 @@ import Notes from "./components/note/Notes";
 import Board from "./components/board/Board";
 import { Modal } from "./components/modal/Modal";
 import { Console } from "./components/console/Console";
+import { Cards } from "./components/Card/Cards";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -16,8 +17,13 @@ export default class App extends React.Component {
         <Modal />
         <div className="app">
           <Board />
-          <Console />
-          <Notes />
+          <div className="section">
+            <Cards />
+            <div className="section-child">
+              <Console />
+              <Notes />
+            </div>
+          </div>
         </div>
       </>
     );

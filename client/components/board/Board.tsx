@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Suspect } from "../console/Suspect";
 import bathroom from "../../assets/ballroom.png";
 import billiard from "../../assets/billiard.png";
 import conservatory from "../../assets/conservatory.png";
@@ -10,7 +11,9 @@ import lounge from "../../assets/lounge.png";
 import study from "../../assets/study.png";
 import "./Board.scss";
 
-interface BoardProps {}
+interface BoardProps {
+  character: Suspect;
+}
 
 export default class Board extends React.Component<BoardProps> {
   render() {

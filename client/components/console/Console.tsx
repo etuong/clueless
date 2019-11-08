@@ -8,7 +8,7 @@ import { Room } from "./Room";
 export const Console = props => {
   const [value, setValue] = useState<string>("");
   const [weapon, setWeapon] = useState<string>("");
-  const [room] = useState<string>("");
+  const [room] = useState<string>("Ballroom");
   const [suspect, setSuspect] = useState<string>("");
 
   const io = require("socket.io-client");
@@ -78,7 +78,7 @@ export const Console = props => {
       <div className="block">
         <label>Rooms:</label>
         <Select
-          placeholder="Readonly"
+          placeholder={room}
           isDisabled={true}
           styles={customStyle}
           options={rooms.map(v => ({

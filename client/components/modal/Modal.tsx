@@ -5,6 +5,7 @@ import { ApiClient } from "../../ApiClient";
 
 export const Modal = props => {
   const [username, setUsername] = useState<string>("");
+  const [numberOfPlayers, setNumberOfPlayers] = useState<number>();
   const [player, setPlayer] = useState<string>("");
   const [dialog, setDialog] = useState<HTMLDialogElement | null>(null);
 
@@ -16,6 +17,10 @@ export const Modal = props => {
 
   const handleUsernameChange = event => {
     setUsername(event.target.value);
+  };
+
+  const handleNumberOfPlayerChange = event => {
+    setNumberOfPlayers(event.target.value);
   };
 
   const handlePlayerChange = selectedOption => {
@@ -39,7 +44,11 @@ export const Modal = props => {
         <input type="text" value={username} onChange={handleUsernameChange} />
       </div>
       <div className="block">
-        <label>Players:</label>
+        <label>Number of Players:</label>
+        <input type="text" value={numberOfPlayers} onChange={handleNumberOfPlayerChange} />
+      </div>
+      <div className="block">
+        <label>Character:</label>
         <select onChange={handlePlayerChange}>
           {Object.keys(Suspect).map(key => (
             <option key={key} value={key}>

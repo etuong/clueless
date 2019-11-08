@@ -5,7 +5,7 @@ module.exports = {
   context: path.resolve(__dirname, ""),
 
   resolve: {
-    extensions: [".tsx", ".ts", ".jsx", ".js", ".png"]
+    extensions: [".tsx", ".ts", ".jsx", ".js", ".png", ".jpg"]
   },
 
   entry: {
@@ -18,11 +18,11 @@ module.exports = {
   },
 
   node: {
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty',
+    fs: "empty",
+    net: "empty",
+    tls: "empty"
   },
-  
+
   module: {
     rules: [
       {
@@ -41,20 +41,19 @@ module.exports = {
         test: [/\.scss$/, /\.css$/],
         use: [
           {
-            loader: "style-loader" 
+            loader: "style-loader"
           },
           {
-            loader: "css-loader" 
+            loader: "css-loader"
           },
           {
-            loader: "sass-loader" 
+            loader: "sass-loader"
           }
         ]
       },
       {
-        test: /\.png$/,
-        exclude: /node_modules/,
-        use: "file-loader"
+        test: /\.(png|svg|jpg|gif)$/,
+        use: ["file-loader"]
       }
     ]
   },
