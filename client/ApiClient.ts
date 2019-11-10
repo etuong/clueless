@@ -1,3 +1,5 @@
+import * as Cookies from 'js-cookie';
+
 export class ApiClient {
   private static host = 'http://localhost:8080';
 
@@ -15,18 +17,14 @@ export class ApiClient {
       credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json',
+        'X-XSRF-TOKEN': Cookies.get('XSRF-TOKEN')!
       },
       body: body ? JSON.stringify(body) : undefined
     });
 
-    /*if (response.status < 200 || response.status >= 300) {
-      return await response.text();
-    }*/
-
-    try {
-      return await response.json();
-    } catch (_) {
-      return null;
+    if (!response.ok) {
+      throw new Error(`${path} returned ${response.status}`);
     }
+    return response.json();  
   };
 }

@@ -12,18 +12,23 @@ CORS(application)
 game = game.CluelessGame()
 
 class PlayerApi(Resource):
+    # Get the player information base on the player's name
     def get(self, player_name):
         player = game.players.get(player_name)
         player_info = dict(name=player.player_name, character_name=player.character_name,
                             room_hall=player.room_hall, cards=player.cards)
         return player_info
 
+    # Create a new player and return its info
     def put(self, player_name):
         parser = reqparse.RequestParser()
         parser.add_argument('character_name', type=str)
         args = parser.parse_args()
         player = game.create_player(player_name, args.get('character_name'))
         game.hallways[player.room_hall] = False
+        player_info = dict(name=player.player_name, character_name=player.character_name,
+                            room_hall=player.room_hall, cards=player.cards)
+        return player_info
 
 
 class PlayersApi(Resource):
@@ -149,6 +154,13 @@ class StartApi(Resource):
     def post(self):
         # When game begins playing, distribute cards to the players
         game.distribute_cards()
+
+        response = dict()
+
+        for name, player in game.players.items():
+            response[name] = vars(player)
+
+        return response
 
 
 api.add_resource(PlayerApi, '/api/player/<player_name>')

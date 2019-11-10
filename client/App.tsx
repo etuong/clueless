@@ -20,15 +20,24 @@ export default class App extends React.Component<AppProps, AppState> {
     this.state = { disable: true, player: "" };
   }
 
+  playerCards = new Array();
+
   toggleDisable = () =>
     this.setState(prevState => ({ disable: !prevState.disable }));
 
   setPlayerName = player => this.setState({ player: player });
 
-  start = () => {
-    ApiClient.post("/start");
+  start = async () => {
+    ApiClient.post("/start");    
+    const response = await ApiClient.get("/player/" + this.state.player);
+    this.setPlayerDeck(response);
     this.toggleDisable();
-    ApiClient.get("/player/" + this.state.player);
+  };
+
+  setPlayerDeck = response => {
+    response.cards.map((c: string) =>
+      this.playerCards.push(require("./assets/" + c + ".jpg"))
+    );
   };
 
   render() {
@@ -44,7 +53,7 @@ export default class App extends React.Component<AppProps, AppState> {
         <div className={`app ${disable && "disable"}`}>
           <Board />
           <div className="section">
-            <Cards />
+            <Cards set={this.playerCards} />
             <div className="section-child">
               <Console player={player} />
               <Notes />

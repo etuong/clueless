@@ -31,11 +31,10 @@ INITIAL_PLAYER_LOCATIONS = {
 
 ROOMS = [
     'study',
-    'hall',
     'library',
-    'billiard room',
+    'billiard',
     'lounge',
-    'dining room',
+    'dining',
     'library',
     'conservatory',
     'ballroom',
@@ -47,17 +46,17 @@ WEAPONS = [
     'knife',
     'wrench',
     'rope',
-    'pistol',
+    'revolver',
     'candlestick'
 ]
 
 CHARACTERS = [
-    'miss scarlet',
-    'professor plum',
-    'colonel mustard',
-    'mrs peacock',
-    'mr green',
-    'mrs white'
+    'miss_scarlet',
+    'professor_plum',
+    'colonel_mustard',
+    'mrs_peacock',
+    'mr_green',
+    'mrs_white'
 ]
 
 
