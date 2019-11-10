@@ -12,7 +12,7 @@ import study from "../../assets/study.png";
 import "./Board.scss";
 
 interface BoardProps {
-  character: Suspect;
+  character?: Suspect;
 }
 
 export default class Board extends React.Component<BoardProps> {
