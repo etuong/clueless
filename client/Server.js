@@ -5,10 +5,16 @@ var io = require("socket.io")(http);
 io.on("connection", function(socket) {
   console.log("User connected");
 
-  socket.on("channel", function(from, msg) {
+  socket.on("channel-message", function(from, msg) {
     const sentence = from + "'s suggestion: " + msg;
+    console.log(sentence);
     io.emit("message", sentence);
-    console.log("Message:", sentence);
+  });
+
+  socket.on("channel-start", function(from) {
+    const response = "Game is started by " + from + "!";
+    console.log(response);
+    io.emit("start", response);
   });
 
   socket.on("disconnect", function() {

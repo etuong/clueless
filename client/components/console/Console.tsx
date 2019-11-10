@@ -16,15 +16,12 @@ export const Console = props => {
     setPlayer(props.player);
   });
 
-  const io = require("socket.io-client");
-  const socket = io.connect("http://localhost:3001", { reconnect: true });
-
   // Add a connect listener
-  socket.on("connect", function(socket) {
+  props.socket.on("connect", function(socket) {
     console.log("Connected!");
   });
 
-  socket.on("message", function(msg) {
+  props.socket.on("message", function(msg) {
     console.log("message: " + msg);
     setValue(value + msg + "\r\n\r\n");
   });
@@ -40,13 +37,13 @@ export const Console = props => {
   const accuse = () => {
     const message =
       suspect + " is the murderer in the " + room + " room using a " + weapon;
-    socket.emit("channel", player, message);
+    props.socket.emit("channel-message", player, message);
   };
 
   const suggest = () => {
     const message =
       suspect + " is the murderer in the " + room + " room using a " + weapon;
-    socket.emit("channel", player, message);
+    props.socket.emit("channel-message", player, message);
   };
 
   const weapons = Object.keys(Weapon).filter(item => {

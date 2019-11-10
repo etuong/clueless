@@ -18,21 +18,30 @@ export default class App extends React.Component<AppProps, AppState> {
   constructor(props) {
     super(props);
     this.state = { disable: true, player: "" };
+
+    this.socket.on("start", async msg => {
+      const response = await ApiClient.get("/player/" + this.state.player);
+      console.log(msg);
+      this.setPlayerDeck(response);
+      this.enableGame();
+    });
   }
 
+  io = require("socket.io-client");
+  socket = this.io.connect("http://localhost:3001", { reconnect: true });
   playerCards = new Array();
 
-  toggleDisable = () =>
-    this.setState(prevState => ({ disable: !prevState.disable }));
+  enableGame = () => this.setState({ disable: false });
 
   setPlayerName = player => this.setState({ player: player });
 
-  start = async () => {
-    ApiClient.post("/start");    
-    const response = await ApiClient.get("/player/" + this.state.player);
-    this.setPlayerDeck(response);
-    this.toggleDisable();
+  handleStartButton = () => {
+    const { player } = this.state;
+    ApiClient.post("/start");
+    this.socket.emit("channel-start", player);
   };
+
+  startGame = async () => {};
 
   setPlayerDeck = response => {
     response.cards.map((c: string) =>
@@ -46,7 +55,7 @@ export default class App extends React.Component<AppProps, AppState> {
       <>
         <Modal handleCallback={this.setPlayerName} />
         {disable && (
-          <button className="start-game" onClick={this.start}>
+          <button className="start-game" onClick={this.handleStartButton}>
             START!
           </button>
         )}
@@ -55,7 +64,7 @@ export default class App extends React.Component<AppProps, AppState> {
           <div className="section">
             <Cards set={this.playerCards} />
             <div className="section-child">
-              <Console player={player} />
+              <Console player={player} socket={this.socket} />
               <Notes />
             </div>
           </div>
