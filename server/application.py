@@ -12,11 +12,10 @@ CORS(application)
 game = game.CluelessGame()
 
 class PlayerApi(Resource):
-
     def get(self, player_name):
         player = game.players.get(player_name)
         player_info = dict(name=player.player_name, character_name=player.character_name,
-                            room_hall=player.room_hall)
+                            room_hall=player.room_hall, cards=player.cards)
         return player_info
 
     def put(self, player_name):
@@ -24,9 +23,7 @@ class PlayerApi(Resource):
         parser.add_argument('character_name', type=str)
         args = parser.parse_args()
         player = game.create_player(player_name, args.get('character_name'))
-        player_info = dict(name=player.player_name, character_name=player.character_name, room_hall=player.room_hall)
         game.hallways[player.room_hall] = False
-        return player_info
 
 
 class PlayersApi(Resource):
@@ -38,8 +35,7 @@ class PlayersApi(Resource):
         return response
 
 
-class PlayerMoveApi(Resource):
-    
+class PlayerMoveApi(Resource):    
     def get(self, player_name):
         player = game.players.get(player_name)
         return dict(location=player.room_hall)
@@ -150,15 +146,9 @@ class SuggestionsApi(Resource):
 
 
 class StartApi(Resource):
-    def put(self):
+    def post(self):
+        # When game begins playing, distribute cards to the players
         game.distribute_cards()
-
-        response = dict()
-
-        for name, player in game.players.items():
-            response[name] = vars(player)
-
-        return response
 
 
 api.add_resource(PlayerApi, '/api/player/<player_name>')

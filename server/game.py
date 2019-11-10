@@ -63,6 +63,7 @@ CHARACTERS = [
 
 class CluelessGame:
     def __init__(self):
+        # Initialize the rooms
         self.rooms = dict()
         self.rooms['study'] = Room('study', 'kitchen', ['study-library', 'study-hall'])
         self.rooms['hall'] = Room('hall', None, ['hall-billiard room', 'hall-lounge', 'study-hall'])
@@ -80,6 +81,9 @@ class CluelessGame:
         self.rooms['kitchen'] = Room('kitchen', 'study', ['dining room-kitchen', 'ballroom-kitchen']) 
 
         self.hallways = HALLWAY_STATE
+
+        # Player dictionary -> key: player name, value: player properties
+        # Using an ordered dict to preserve ordering of player registration
         self.players = OrderedDict()
 
         self.game_answer = self.create_game_answer()
@@ -98,13 +102,16 @@ class CluelessGame:
         return (character, room, weapon)
 
 
+    # Create a new player and assign an initial starting position on the board
     def create_player(self, player_name, character_name):
         self.players[player_name] = Player(player_name, character_name, 
                                             INITIAL_PLAYER_LOCATIONS.get(character_name))
         return self.players[player_name]
 
 
+    # Algorithm to distribute random cards to the players
     def distribute_cards(self):
+        # Get all the cards
         cards = ROOMS + WEAPONS + CHARACTERS
         current_player_index = 0
 
@@ -112,10 +119,15 @@ class CluelessGame:
             if current_player_index > (len(self.players) - 1):
                 current_player_index = 0
 
+            # Get the current player
             current_player = [*self.players.keys()][current_player_index]
 
+            # Get a random card and remove from deck
             random_card = random.choice(cards)
             cards.remove(random_card)
 
+            # Append new card to player hand
             self.players.get(current_player).cards.append(random_card)
+
+            # Move on to the next player
             current_player_index += 1

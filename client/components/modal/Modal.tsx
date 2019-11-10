@@ -4,9 +4,8 @@ import { Suspect } from "../console/Suspect";
 import { ApiClient } from "../../ApiClient";
 
 export const Modal = props => {
-  const [username, setUsername] = useState<string>("");
-  const [numberOfPlayers, setNumberOfPlayers] = useState<number>();
   const [player, setPlayer] = useState<string>("");
+  const [character, setCharacter] = useState<string>("");
   const [dialog, setDialog] = useState<HTMLDialogElement | null>(null);
 
   useEffect(() => {
@@ -15,21 +14,18 @@ export const Modal = props => {
     }
   }, [dialog]);
 
-  const handleUsernameChange = event => {
-    setUsername(event.target.value);
+  const handleplayerChange = event => {
+    setPlayer(event.target.value);
   };
 
-  const handleNumberOfPlayerChange = event => {
-    setNumberOfPlayers(event.target.value);
-  };
-
-  const handlePlayerChange = selectedOption => {
-    setPlayer(Suspect[selectedOption.target.value]);
+  const handlecharacterChange = selectedOption => {
+    setCharacter(Suspect[selectedOption.target.value]);
   };
 
   const handleButton = () => {
-    const json = { "character_name": player };
-    ApiClient.post("/player/" + username, json);
+    const json = { character_name: character };
+    ApiClient.put("/player/" + player, json);
+    props.handleCallback(player);
     dialog!.close();
   };
 
@@ -38,18 +34,14 @@ export const Modal = props => {
       ref={ref => setDialog(ref)}
       className={`modal center-dialog modal-body`}
     >
-      <p>To play, please type in your name and choose a player</p>
+      <p>To play, please type in your name and choose a character</p>
       <div className="block">
         <label>Name:</label>
-        <input type="text" value={username} onChange={handleUsernameChange} />
-      </div>
-      <div className="block">
-        <label>Number of Players:</label>
-        <input type="text" value={numberOfPlayers} onChange={handleNumberOfPlayerChange} />
+        <input type="text" value={player} onChange={handleplayerChange} />
       </div>
       <div className="block">
         <label>Character:</label>
-        <select onChange={handlePlayerChange}>
+        <select onChange={handlecharacterChange}>
           {Object.keys(Suspect).map(key => (
             <option key={key} value={key}>
               {Suspect[key as any]}
