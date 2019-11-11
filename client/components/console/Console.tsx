@@ -18,11 +18,11 @@ export const Console = props => {
 
   // Add a connect listener
   props.socket.on("connect", function(socket) {
-    console.log("Connected!");
+    //console.log("Connected!");
   });
 
   props.socket.on("message", function(msg) {
-    console.log("message: " + msg);
+    //console.log("message: " + msg);
     setValue(value + msg + "\r\n\r\n");
   });
 
@@ -37,13 +37,13 @@ export const Console = props => {
   const accuse = () => {
     const message =
       suspect + " is the murderer in the " + room + " room using a " + weapon;
-    props.socket.emit("channel-message", player, message);
+    props.socket.emit("channel-message", player, "Accusation", message);
   };
 
   const suggest = () => {
     const message =
       suspect + " is the murderer in the " + room + " room using a " + weapon;
-    props.socket.emit("channel-message", player, message);
+    props.socket.emit("channel-message", player, "Suggestion", message);
   };
 
   const weapons = Object.keys(Weapon).filter(item => {

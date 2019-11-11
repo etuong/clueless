@@ -1,5 +1,7 @@
 import * as React from "react";
 import { Suspect } from "../console/Suspect";
+import { Room, Empty } from "./Room";
+import { Hall } from "./Hall";
 import bathroom from "../../assets/ballroom.png";
 import billiard from "../../assets/billiard.png";
 import conservatory from "../../assets/conservatory.png";
@@ -21,92 +23,39 @@ export default class Board extends React.Component<BoardProps> {
       <table>
         <tbody>
           <tr>
-            <td
-              style={{ backgroundImage: `url(${bathroom})` }}
-              className="room"
-            >
-              <div className="player">Prof Plum</div>
-            </td>
-            <td>
-              <div className="horizontal-hall path"></div>
-            </td>
-            <td
-              style={{ backgroundImage: `url(${billiard})` }}
-              className="room"
-            ></td>
-            <td>
-              <div className="horizontal-hall"></div>
-            </td>
-            <td
-              style={{ backgroundImage: `url(${conservatory})` }}
-              className="room"
-            ></td>
+            <Room room={study} character={"Prof Plum"} selected={true} />
+            <Hall horizontal={true} selected={true} />
+            <Room room={hall} />
+            <Hall horizontal={true} />
+            <Room room={lounge} />
           </tr>
           <tr>
-            <td>
-              <div className="vertical-hall path"></div>
-            </td>
-            <td></td>
-            <td>
-              <div className="vertical-hall"></div>
-            </td>
-            <td></td>
-            <td>
-              <div className="vertical-hall"></div>
-            </td>
+            <Hall horizontal={false} selected={true} />
+            <Empty />
+            <Hall horizontal={false} />
+            <Empty />
+            <Hall horizontal={false} />
           </tr>
           <tr>
-            <td
-              style={{ backgroundImage: `url(${dining})` }}
-              className="room"
-            ></td>
-            <td>
-              <div className="horizontal-hall"></div>
-            </td>
-            <td
-              style={{ backgroundImage: `url(${hall})` }}
-              className="room"
-            ></td>
-            <td>
-              <div className="horizontal-hall"></div>
-            </td>
-            <td
-              style={{ backgroundImage: `url(${kitchen})` }}
-              className="room"
-            ></td>
+            <Room room={library} />
+            <Hall horizontal={true} />
+            <Room room={billiard} />
+            <Hall horizontal={true} />
+            <Room room={dining} />
           </tr>
           <tr>
-            <td>
-              <div className="vertical-hall"></div>
-            </td>
-            <td></td>
-            <td>
-              <div className="vertical-hall"></div>
-            </td>
-            <td></td>
-            <td>
-              <div className="vertical-hall"></div>
-            </td>
+            <Hall horizontal={false} />
+            <Empty />
+            <Hall horizontal={false} />
+            <Empty />
+            <Hall horizontal={false} />
           </tr>
           <tr>
-            <td
-              style={{ backgroundImage: `url(${library})` }}
-              className="room"
-            ></td>
-            <td>
-              <div className="horizontal-hall"></div>
-            </td>
-            <td
-              style={{ backgroundImage: `url(${lounge})` }}
-              className="room"
-            ></td>
-            <td>
-              <div className="horizontal-hall"></div>
-            </td>
-            <td
-              style={{ backgroundImage: `url(${study})` }}
-              className="room"
-            ></td>
+            <Room room={conservatory} />
+            <Hall horizontal={true} />
+            <Room room={bathroom} />
+            <Hall horizontal={true} />
+            <Room room={kitchen} />
           </tr>
         </tbody>
       </table>

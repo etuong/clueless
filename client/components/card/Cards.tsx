@@ -16,7 +16,7 @@ export const Cards = props => {
 
   return (
     <div className="card-container">
-      <p className="title">Cards</p>
+      <p className="title">{props.player && `${props.player}'s`} Cards</p>
 
       {shuffledSet.map((card, idx) => {
         return <img key={idx} src={card} />;

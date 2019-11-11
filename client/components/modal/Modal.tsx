@@ -5,7 +5,7 @@ import { ApiClient } from "../../ApiClient";
 
 export const Modal = props => {
   const [player, setPlayer] = useState<string>("");
-  const [character, setCharacter] = useState<string>("");
+  const [character, setCharacter] = useState<string>(Suspect.MissScarlett);
   const [dialog, setDialog] = useState<HTMLDialogElement | null>(null);
 
   useEffect(() => {

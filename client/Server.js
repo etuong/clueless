@@ -5,8 +5,8 @@ var io = require("socket.io")(http);
 io.on("connection", function(socket) {
   console.log("User connected");
 
-  socket.on("channel-message", function(from, msg) {
-    const sentence = from + "'s suggestion: " + msg;
+  socket.on("channel-message", function(from, action, msg) {
+    const sentence = from + "'s " + action + ": " + msg;
     console.log(sentence);
     io.emit("message", sentence);
   });

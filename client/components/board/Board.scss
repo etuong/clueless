@@ -3,10 +3,11 @@ table {
 }
 
 .room {
+  border: 1.5px solid black;
   background-repeat: no-repeat;
   background-position: center;
   height: 150px;
-  width: 530px;
+  width: 185px;
 }
 
 .horizontal-hall {
@@ -28,6 +29,7 @@ table {
   margin: 85px auto 0 auto;
   color: white;
   font-size: 14px;
+  font-weight: bold;
   line-height: 25px;
   background-color: red;
   height: 25px;
@@ -40,7 +42,13 @@ table {
 }
 
 @keyframes blinker {
+  0% {
+    border-color: rgb(255, 0, 0);
+  }
   50% {
-    opacity: 0;
+    border-color: rgba(255, 0, 0, 0);
+  }
+  100% {
+    border-color: rgba(255, 0, 0, 1);
   }
 }

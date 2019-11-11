@@ -19,7 +19,7 @@ export default class App extends React.Component<AppProps, AppState> {
   constructor(props) {
     super(props);
     this.state = { disable: true, player: "", isPlaying: false };
-    this.setIsPlaying();
+    //this.setIsPlaying();
 
     this.socket.on("start", async msg => {
       const response = await ApiClient.get("/player/" + this.state.player);
@@ -68,7 +68,7 @@ export default class App extends React.Component<AppProps, AppState> {
           <div className={`app ${disable && "disable"}`}>
             <Board />
             <div className="section">
-              <Cards set={this.playerCards} />
+              <Cards set={this.playerCards} player={player} />
               <div className="section-child">
                 <Console player={player} socket={this.socket} />
                 <Notes />
