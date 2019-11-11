@@ -12,12 +12,14 @@ interface AppProps {}
 interface AppState {
   disable: boolean;
   player: string;
+  isPlaying: boolean;
 }
 
 export default class App extends React.Component<AppProps, AppState> {
   constructor(props) {
     super(props);
-    this.state = { disable: true, player: "" };
+    this.state = { disable: true, player: "", isPlaying: false };
+    this.setIsPlaying();
 
     this.socket.on("start", async msg => {
       const response = await ApiClient.get("/player/" + this.state.player);
@@ -35,13 +37,16 @@ export default class App extends React.Component<AppProps, AppState> {
 
   setPlayerName = player => this.setState({ player: player });
 
+  setIsPlaying = async () => {
+    const flag = await ApiClient.get("/start");
+    this.setState({ isPlaying: flag.isPlaying });
+  };
+
   handleStartButton = () => {
     const { player } = this.state;
     ApiClient.post("/start");
     this.socket.emit("channel-start", player);
   };
-
-  startGame = async () => {};
 
   setPlayerDeck = response => {
     response.cards.map((c: string) =>
@@ -50,26 +55,34 @@ export default class App extends React.Component<AppProps, AppState> {
   };
 
   render() {
-    const { disable, player } = this.state;
-    return (
-      <>
-        <Modal handleCallback={this.setPlayerName} />
-        {disable && (
-          <button className="start-game" onClick={this.handleStartButton}>
-            START!
-          </button>
-        )}
-        <div className={`app ${disable && "disable"}`}>
-          <Board />
-          <div className="section">
-            <Cards set={this.playerCards} />
-            <div className="section-child">
-              <Console player={player} socket={this.socket} />
-              <Notes />
+    const { disable, player, isPlaying } = this.state;
+    if (!isPlaying) {
+      return (
+        <>
+          <Modal handleCallback={this.setPlayerName} />
+          {disable && (
+            <button className="start-game" onClick={this.handleStartButton}>
+              START!
+            </button>
+          )}
+          <div className={`app ${disable && "disable"}`}>
+            <Board />
+            <div className="section">
+              <Cards set={this.playerCards} />
+              <div className="section-child">
+                <Console player={player} socket={this.socket} />
+                <Notes />
+              </div>
             </div>
           </div>
-        </div>
-      </>
-    );
+        </>
+      );
+    } else {
+      return (
+        <p className="already-playing">
+          THE GAME IS ALREADY PLAYING! PLEASE WAIT FOR THE NEXT GAME.
+        </p>
+      );
+    }
   }
 }

@@ -87,6 +87,7 @@ class CluelessGame:
 
         self.game_answer = self.create_game_answer()
         self.current_player_index = 0
+        self.game_started = False
 
 
     def create_game_answer(self):
@@ -113,7 +114,10 @@ class CluelessGame:
         # Get all the cards
         cards = ROOMS + WEAPONS + CHARACTERS
         current_player_index = 0
-
+        print(ROOMS)
+        print(WEAPONS)
+        print(CHARACTERS)
+        print(cards)
         while len(cards) != 0:
             if current_player_index > (len(self.players) - 1):
                 current_player_index = 0
@@ -130,3 +134,4 @@ class CluelessGame:
 
             # Move on to the next player
             current_player_index += 1
+        self.game_started = True

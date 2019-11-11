@@ -161,6 +161,10 @@ class StartApi(Resource):
             response[name] = vars(player)
 
         return response
+    
+    def get(self):
+        # Return game state
+        return {'isPlaying': game.game_started}
 
 
 api.add_resource(PlayerApi, '/api/player/<player_name>')
