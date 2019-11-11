@@ -19,7 +19,7 @@ export default class App extends React.Component<AppProps, AppState> {
   constructor(props) {
     super(props);
     this.state = { disable: true, player: "", isPlaying: false };
-    //this.setIsPlaying();
+    this.setIsPlaying();
 
     this.socket.on("start", async msg => {
       const response = await ApiClient.get("/player/" + this.state.player);
@@ -32,6 +32,7 @@ export default class App extends React.Component<AppProps, AppState> {
   io = require("socket.io-client");
   socket = this.io.connect("http://localhost:3001", { reconnect: true });
   playerCards = new Array();
+  players = new Array();
 
   enableGame = () => this.setState({ disable: false });
 
@@ -42,10 +43,15 @@ export default class App extends React.Component<AppProps, AppState> {
     this.setState({ isPlaying: flag.isPlaying });
   };
 
-  handleStartButton = () => {
+  handleStartButton = async () => {
     const { player } = this.state;
-    ApiClient.post("/start");
+    const response = await ApiClient.post("/start");
+    this.setPlayers(response);
     this.socket.emit("channel-start", player);
+  };
+
+  setPlayers = response => {
+    Object.keys(response).map((p: string) => this.players.push(p));
   };
 
   setPlayerDeck = response => {
@@ -66,7 +72,7 @@ export default class App extends React.Component<AppProps, AppState> {
             </button>
           )}
           <div className={`app ${disable && "disable"}`}>
-            <Board />
+            <Board players={this.players} />
             <div className="section">
               <Cards set={this.playerCards} player={player} />
               <div className="section-child">

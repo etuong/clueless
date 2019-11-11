@@ -114,10 +114,7 @@ class CluelessGame:
         # Get all the cards
         cards = ROOMS + WEAPONS + CHARACTERS
         current_player_index = 0
-        print(ROOMS)
-        print(WEAPONS)
-        print(CHARACTERS)
-        print(cards)
+
         while len(cards) != 0:
             if current_player_index > (len(self.players) - 1):
                 current_player_index = 0

@@ -15,6 +15,7 @@ import "./Board.scss";
 
 interface BoardProps {
   character?: Suspect;
+  players: any[];
 }
 
 export default class Board extends React.Component<BoardProps> {
