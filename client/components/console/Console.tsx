@@ -9,7 +9,7 @@ export const Console = props => {
   const [player, setPlayer] = useState<string>("");
   const [value, setValue] = useState<string>("");
   const [weapon, setWeapon] = useState<string>("");
-  const [room] = useState<string>("Ballroom");
+  const [room] = useState<string>(Room.Study);
   const [suspect, setSuspect] = useState<string>("");
 
   useEffect(() => {

@@ -21,12 +21,12 @@ HALLWAY_STATE = {
 }
 
 INITIAL_PLAYER_LOCATIONS = {
-    'Miss Scarlett': 'hall-lounge',
-    'Professor Plum': 'study-library',
-    'Colonel Mustard': 'lounge-dining room',
-    'Mrs Peacock': 'library-conservatory',
-    'Rev. Green': 'conservatory-ballroom',
-    'Mrs. White': 'ballroom-kitchen'
+    'miss_scarlet': 'hall-lounge',
+    'professor_plum': 'study-library',
+    'colonel_mustard': 'lounge-dining room',
+    'mrs_peacock': 'library-conservatory',
+    'mr_green': 'conservatory-ballroom',
+    'mrs_white': 'ballroom-kitchen'
 }
 
 ROOMS = [
