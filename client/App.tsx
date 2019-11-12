@@ -13,12 +13,18 @@ interface AppState {
   disable: boolean;
   player: string;
   isPlaying: boolean;
+  nextPlayer: string;
 }
 
 export default class App extends React.Component<AppProps, AppState> {
   constructor(props) {
     super(props);
-    this.state = { disable: true, player: "", isPlaying: false };
+    this.state = {
+      disable: true,
+      player: "",
+      isPlaying: false,
+      nextPlayer: "Tom"
+    };
     this.setIsPlaying();
 
     this.socket.on("start", async msg => {
@@ -61,7 +67,7 @@ export default class App extends React.Component<AppProps, AppState> {
   };
 
   render() {
-    const { disable, player, isPlaying } = this.state;
+    const { disable, player, isPlaying, nextPlayer } = this.state;
     if (!isPlaying) {
       return (
         <>
@@ -71,6 +77,7 @@ export default class App extends React.Component<AppProps, AppState> {
               START!
             </button>
           )}
+          {!disable && <button className="next-player">{nextPlayer}'s Turn</button>}
           <div className={`app ${disable && "disable"}`}>
             <Board players={this.players} />
             <div className="section">

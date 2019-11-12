@@ -1,10 +1,11 @@
 dialog::backdrop {
-  background: rgba(0, 0, 0, 0.75);
+  background: url("../../assets/tile.png");
 }
-
 .modal {
+  
   &.center-dialog {
     margin: auto;
+    
 
     &.modal-body {
       border-radius: 20px;

@@ -24,21 +24,21 @@ export default class Board extends React.Component<BoardProps> {
       <table>
         <tbody>
           <tr>
-            <Room room={study} character={"Prof Plum"} selected={true} />
-            <Hall horizontal={true} selected={true} />
+            <Room room={study} selected={true} />
+            <Hall horizontal={true} />
             <Room room={hall} />
             <Hall horizontal={true} />
             <Room room={lounge} />
           </tr>
           <tr>
-            <Hall horizontal={false} selected={true} />
+            <Hall horizontal={false} character={"Prof Plum"} selected={true} />
             <Empty />
             <Hall horizontal={false} />
             <Empty />
             <Hall horizontal={false} />
           </tr>
           <tr>
-            <Room room={library} />
+            <Room room={library} selected={true}/>
             <Hall horizontal={true} />
             <Room room={billiard} />
             <Hall horizontal={true} />
@@ -55,7 +55,7 @@ export default class Board extends React.Component<BoardProps> {
             <Room room={conservatory} />
             <Hall horizontal={true} />
             <Room room={bathroom} />
-            <Hall horizontal={true} />
+            <Hall horizontal={true} character={"Mrs. White"}  />
             <Room room={kitchen} />
           </tr>
         </tbody>

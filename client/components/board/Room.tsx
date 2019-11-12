@@ -6,7 +6,9 @@ export const Room = props => {
       style={{ backgroundImage: `url(${props.room})` }}
       className={`room ${props.selected && "path"}`}
     >
-      <div className={props.character ? "player" : ""}>{props.character}</div>
+      <div className={props.character ? "player in-room" : ""}>
+        {props.character}
+      </div>
     </td>
   );
 };
