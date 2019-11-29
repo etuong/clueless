@@ -22,7 +22,7 @@ export const Modal = props => {
     setCharacter(Suspect[selectedOption.target.value]);
   };
 
-  const handleButton = () => {
+  const handlePlayButton = () => {
     const json = { character_name: character };
     ApiClient.put("/player/" + player, json);
     props.handleCallback(player);
@@ -49,7 +49,7 @@ export const Modal = props => {
           ))}
         </select>
       </div>
-      <button onClick={handleButton}>Play!</button>
+      <button onClick={handlePlayButton}>Play!</button>
     </dialog>
   );
 };

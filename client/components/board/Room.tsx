@@ -1,10 +1,15 @@
 import * as React from "react";
 
 export const Room = props => {
+  const cellClick = () => {
+    alert("asdf");
+  };
+
   return (
     <td
       style={{ backgroundImage: `url(${props.room})` }}
       className={`room ${props.selected && "path"}`}
+      onClick={props.selected && cellClick}
     >
       <div className={props.character ? "player in-room" : ""}>
         {props.character}

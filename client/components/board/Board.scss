@@ -53,6 +53,10 @@ table {
 .path {
   border-color: red;
   animation: blinker 2s linear infinite;
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 @keyframes blinker {

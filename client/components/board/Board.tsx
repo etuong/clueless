@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Suspect } from "../console/Suspect";
 import { Room, Empty } from "./Room";
 import { Hall } from "./Hall";
 import bathroom from "../../assets/ballroom.png";
@@ -13,53 +12,46 @@ import lounge from "../../assets/lounge.png";
 import study from "../../assets/study.png";
 import "./Board.scss";
 
-interface BoardProps {
-  character?: Suspect;
-  players: any[];
-}
-
-export default class Board extends React.Component<BoardProps> {
-  render() {
-    return (
-      <table>
-        <tbody>
-          <tr>
-            <Room room={study} selected={true} />
-            <Hall horizontal={true} />
-            <Room room={hall} />
-            <Hall horizontal={true} />
-            <Room room={lounge} />
-          </tr>
-          <tr>
-            <Hall horizontal={false} character={"Prof Plum"} selected={true} />
-            <Empty />
-            <Hall horizontal={false} />
-            <Empty />
-            <Hall horizontal={false} />
-          </tr>
-          <tr>
-            <Room room={library} selected={true}/>
-            <Hall horizontal={true} />
-            <Room room={billiard} />
-            <Hall horizontal={true} />
-            <Room room={dining} />
-          </tr>
-          <tr>
-            <Hall horizontal={false} />
-            <Empty />
-            <Hall horizontal={false} />
-            <Empty />
-            <Hall horizontal={false} />
-          </tr>
-          <tr>
-            <Room room={conservatory} />
-            <Hall horizontal={true} />
-            <Room room={bathroom} />
-            <Hall horizontal={true} character={"Mrs. White"}  />
-            <Room room={kitchen} />
-          </tr>
-        </tbody>
-      </table>
-    );
-  }
-}
+export const Board = props => {
+  return (
+    <table>
+      <tbody>
+        <tr>
+          <Room room={study} />
+          <Hall horizontal={true} />
+          <Room room={hall} />
+          <Hall horizontal={true} />
+          <Room room={lounge} />
+        </tr>
+        <tr>
+          <Hall horizontal={false} />
+          <Empty />
+          <Hall horizontal={false} />
+          <Empty />
+          <Hall horizontal={false} />
+        </tr>
+        <tr>
+          <Room room={library} />
+          <Hall horizontal={true} />
+          <Room room={billiard} />
+          <Hall horizontal={true} />
+          <Room room={dining} />
+        </tr>
+        <tr>
+          <Hall horizontal={false} />
+          <Empty />
+          <Hall horizontal={false} />
+          <Empty />
+          <Hall horizontal={false} />
+        </tr>
+        <tr>
+          <Room room={conservatory} />
+          <Hall horizontal={true} />
+          <Room room={bathroom} />
+          <Hall horizontal={true} />
+          <Room room={kitchen} />
+        </tr>
+      </tbody>
+    </table>
+  );
+};

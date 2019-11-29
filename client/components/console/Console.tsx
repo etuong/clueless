@@ -7,24 +7,36 @@ import { Room } from "./Room";
 
 export const Console = props => {
   const [player, setPlayer] = useState<string>("");
-  const [value, setValue] = useState<string>("");
+  const [output, setOutput] = useState<string>("");
   const [weapon, setWeapon] = useState<string>("");
   const [room] = useState<string>(Room.Study);
   const [suspect, setSuspect] = useState<string>("");
+
+  let outputMessage = "";
 
   useEffect(() => {
     setPlayer(props.player);
   });
 
-  // Add a connect listener
-  props.socket.on("connect", function(socket) {
-    //console.log("Connected!");
-  });
+  useEffect(() => {
+    setPlayer(props.player);
 
-  props.socket.on("message", function(msg) {
-    //console.log("message: " + msg);
-    setValue(value + msg + "\r\n\r\n");
-  });
+    props.socket.on("message", function(msg) {
+      updateOutputMessage(msg);
+    });
+
+    props.socket.on("new-player", function(newPlayer) {
+      updateOutputMessage(newPlayer);
+    });
+  }, []);
+
+  const updateOutputMessage = (msg: string) => {
+    console.log("message: " + msg);
+    outputMessage = outputMessage.concat(msg) + "\r\n\r\n";
+    setOutput(outputMessage);
+    var textarea = document.getElementById("console_output");
+    textarea!.scrollTop = textarea!.scrollHeight;
+  };
 
   const handleSuspectChange = selectedOption => {
     setSuspect(selectedOption.label);
@@ -110,7 +122,7 @@ export const Console = props => {
       </div>
       <div className="output">
         <label>Output</label>
-        <textarea value={value} readOnly />
+        <textarea id="console_output" value={output} readOnly />
       </div>
     </div>
   );

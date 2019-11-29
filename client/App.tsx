@@ -1,7 +1,7 @@
 import * as React from "react";
 import "./App.scss";
 import Notes from "./components/note/Notes";
-import Board from "./components/board/Board";
+import { Board } from "./components/board/Board";
 import { Modal } from "./components/modal/Modal";
 import { Console } from "./components/console/Console";
 import { Cards } from "./components/Card/Cards";
@@ -25,7 +25,11 @@ export default class App extends React.Component<AppProps, AppState> {
       isPlaying: false,
       nextPlayer: "Tom"
     };
-    this.setIsPlaying();
+    this.socket = this.io.connect("http://localhost:3001", { reconnect: true });
+  }
+
+  componentDidMount() {
+    //this.setIsPlaying();
 
     this.socket.on("start", async msg => {
       const response = await ApiClient.get("/player/" + this.state.player);
@@ -35,14 +39,18 @@ export default class App extends React.Component<AppProps, AppState> {
     });
   }
 
-  io = require("socket.io-client");
-  socket = this.io.connect("http://localhost:3001", { reconnect: true });
+  private socket;
+  private io = require("socket.io-client");
+  
   playerCards = new Array();
   players = new Array();
 
   enableGame = () => this.setState({ disable: false });
 
-  setPlayerName = player => this.setState({ player: player });
+  setPlayerName = player => {
+    this.setState({ player: player });
+    this.socket.emit("channel-new-player", player);
+  }
 
   setIsPlaying = async () => {
     const flag = await ApiClient.get("/start");
