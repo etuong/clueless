@@ -15,6 +15,7 @@ import { useState, useEffect } from "react";
 import { ApiClient } from "../../ApiClient";
 
 export const Board = props => {
+  "use strict";
   const [study, setStudy] = useState<string>("");
   const [studyHall, setStudyHall] = useState<string>("");
   const [hall, setHall] = useState<string>("");
@@ -37,50 +38,135 @@ export const Board = props => {
   const [ballroomKitchen, setBallroomKitchen] = useState<string>("");
   const [kitchen, setKitchen] = useState<string>("");
 
-  const dictionary = {
-    study: setStudy,
-    "study-hall": setStudyHall,
-    hall: setHall,
-    "hall-lounge": setHallLounge,
-    lounge: setLounge,
-    "study-library": setStudyLibrary,
-    "hall-billiard": setHallBilliard,
-    "lounge-dining": setLoungeDining,
-    library: setLibrary,
-    "library-billiard": setLibraryBilliard,
-    billiard: setBilliard,
-    "billiard-dining": setBilliardDining,
-    dining: setDining,
-    "library-conservatory": setLibraryConservatory,
-    "billiard-ballroom": setBilliardBallroom,
-    "dining-kitchen": setDiningKitchen,
-    conservatory: setConservatory,
-    "conservatory-ballroom": setConservatoryBallroom,
-    ballroom: setBallroom,
-    "ballroom-kitchen": setBallroomKitchen,
-    kitchen: setKitchen
-  };
-
   useEffect(() => {
     props.socket.on("update-board", async function() {
+      resetBoard();
       const response = await ApiClient.get("/players");
       console.log(response);
       for (var key of Object.keys(response)) {
         const roomHall = response[key].room_hall;
-        const f = dictionary[roomHall];       
-        const character = response[key].character_name;
-        if (f) {
-          f.call(character);
-        }
-        // SHIT DOESN"T WORK ABOVE
-        if (roomHall === "ballroom-kitchen") {
-          setBallroomKitchen(character);
-        } else if (roomHall === "conservatory-ballroom") {
-          setConservatoryBallroom(character);
+        const character = prettifyName(response[key].character_name);
+
+        switch (roomHall) {
+          case "study":
+            setStudy(character);
+            break;
+          case "study-hall":
+            setStudyHall(character);
+            break;
+          case "hall":
+            setHall(character);
+            break;
+          case "hall-lounge":
+            setHallLounge(character);
+            break;
+          case "lounge":
+            setLounge(character);
+            break;
+          case "study-library":
+            setStudyLibrary(character);
+            break;
+          case "hall-billiard":
+            setHallBilliard(character);
+            break;
+          case "lounge-dining":
+            setLoungeDining(character);
+            break;
+          case "library":
+            setLibrary(character);
+            break;
+          case "library-billiard":
+            setLibraryBilliard(character);
+            break;
+          case "billiard":
+            setBilliard(character);
+            break;
+          case "billiard-dining":
+            setBilliardDining(character);
+            break;
+          case "dining":
+            setDining(character);
+            break;
+          case "library-conservatory":
+            setLibraryConservatory(character);
+            break;
+          case "billiard-ballroom":
+            setBilliardBallroom(character);
+            break;
+          case "dining-kitchen":
+            setDiningKitchen(character);
+            break;
+          case "conservatory":
+            setConservatory(character);
+            break;
+          case "conservatory-ballroom":
+            setConservatoryBallroom(character);
+            break;
+          case "ballroom":
+            setBallroom(character);
+            break;
+          case "ballroom-kitchen":
+            setBallroomKitchen(character);
+            break;
+          case "kitchen":
+            setKitchen(character);
+            break;
         }
       }
     });
   }, []);
+
+  const resetBoard = () => {
+    const EMPTY = "";
+    setStudy(EMPTY);
+    setStudyHall(EMPTY);
+    setHall(EMPTY);
+    setHallLounge(EMPTY);
+    setLounge(EMPTY);
+    setStudyLibrary(EMPTY);
+    setHallBilliard(EMPTY);
+    setLoungeDining(EMPTY);
+    setLibrary(EMPTY);
+    setLibraryBilliard(EMPTY);
+    setBilliard(EMPTY);
+    setBilliardDining(EMPTY);
+    setDining(EMPTY);
+    setLibraryConservatory(EMPTY);
+    setBilliardBallroom(EMPTY);
+    setDiningKitchen(EMPTY);
+    setConservatory(EMPTY);
+    setConservatoryBallroom(EMPTY);
+    setBallroom(EMPTY);
+    setBallroomKitchen(EMPTY);
+    setKitchen(EMPTY);
+  }
+
+  const prettifyName = name => {
+    let prettifiedName = "";
+    switch (name) {
+      case "miss_scarlet":
+        prettifiedName = "Miss Scarlet";
+        break;
+      case "professor_plum":
+        prettifiedName = "Prof Plum";
+        break;
+      case "colonel_mustard":
+        prettifiedName = "Col Mustard";
+        break;
+      case "mrs_peacock":
+        prettifiedName = "Mrs. Peacock";
+        break;
+      case "mr_green":
+        prettifiedName = "Mr. Green";
+        break;
+      case "mrs_white":
+        prettifiedName = "Mrs. White";
+        break;
+      default:
+        break;
+    }
+    return prettifiedName;
+  };
 
   return (
     <table>

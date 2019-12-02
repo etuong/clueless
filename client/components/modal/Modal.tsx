@@ -23,7 +23,8 @@ export const Modal = props => {
   };
 
   const handlePlayButton = () => {
-    const json = { character_name: character };
+    const character_name = character === "Miss Scarlett" ? "miss_scarlet" : character;
+    const json = { character_name: character_name };
     ApiClient.put("/player/" + player, json);
     props.handleCallback(player);
     dialog!.close();
