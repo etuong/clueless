@@ -25,6 +25,7 @@ io.on("connection", function(socket) {
     const response = getCurrentTime() + "Game is started by " + from + "!";
     console.log(response);
     io.emit("start", response);
+    io.emit("update-board");
   });
 
   socket.on("disconnect", function() {

@@ -9,13 +9,13 @@ HALLWAY_STATE = {
     'study-hall': True,
     'study-library': True,
     'hall-lounge': True,
-    'hall-billiard room': True,
-    'lounge-dining room': True,
-    'library-billiard room': True,
+    'hall-billiard': True,
+    'lounge-dining': True,
+    'library-billiard': True,
     'library-conservatory': True,
-    'billiard room-dining room': True,
-    'billiard room-ballroom': True,
-    'dining room-kitchen': True,
+    'billiard-dining': True,
+    'billiard-ballroom': True,
+    'dining-kitchen': True,
     'conservatory-ballroom': True,
     'ballroom-kitchen': True
 }
@@ -23,7 +23,7 @@ HALLWAY_STATE = {
 INITIAL_PLAYER_LOCATIONS = {
     'miss_scarlet': 'hall-lounge',
     'professor_plum': 'study-library',
-    'colonel_mustard': 'lounge-dining room',
+    'colonel_mustard': 'lounge-dining',
     'mrs_peacock': 'library-conservatory',
     'mr_green': 'conservatory-ballroom',
     'mrs_white': 'ballroom-kitchen'
@@ -59,25 +59,24 @@ CHARACTERS = [
     'mrs_white'
 ]
 
-
 class CluelessGame:
     def __init__(self):
         # Initialize the rooms
         self.rooms = dict()
         self.rooms['study'] = Room('study', 'kitchen', ['study-library', 'study-hall'])
-        self.rooms['hall'] = Room('hall', None, ['hall-billiard room', 'hall-lounge', 'study-hall'])
-        self.rooms['lounge'] = Room('lounge', 'conservatory', ['lounge-dining room', 'hall-lounge'])
+        self.rooms['hall'] = Room('hall', None, ['hall-billiard', 'hall-lounge', 'study-hall'])
+        self.rooms['lounge'] = Room('lounge', 'conservatory', ['lounge-dining', 'hall-lounge'])
         self.rooms['library'] = Room('library', None, ['study-library', 'library-conservatory', 
-                                     'library-billiard room'])
-        self.rooms['billiard room'] = Room('billiard room', None,
-                                           ['hall-billiard room', 'billiard room-ballroom', 'library-billiard room', 
-                                           'billiard room-dining room'])
-        self.rooms['dining room'] = Room('dining room', None, ['lounge-dining room', 'dining room-kitchen',
-                                         'billiard room-diningroom'])
+                                     'library-billiard'])
+        self.rooms['billiard'] = Room('billiard', None,
+                                           ['hall-billiard', 'billiard-ballroom', 'library-billiard', 
+                                           'billiard-dining'])
+        self.rooms['dining'] = Room('dining', None, ['lounge-dining', 'dining-kitchen',
+                                         'billiard-diningroom'])
         self.rooms['conservatory'] = Room('conservatory', 'lounge', ['library-conservatory', 'conservatory-ballroom'])
-        self.rooms['ballroom'] = Room('ballroom', None, ['billiard room-ballroom', 'conservatory-ballroom',
+        self.rooms['ballroom'] = Room('ballroom', None, ['billiard-ballroom', 'conservatory-ballroom',
                                       'ballroom-kitchen'])
-        self.rooms['kitchen'] = Room('kitchen', 'study', ['dining room-kitchen', 'ballroom-kitchen']) 
+        self.rooms['kitchen'] = Room('kitchen', 'study', ['dining-kitchen', 'ballroom-kitchen']) 
 
         self.hallways = HALLWAY_STATE
 
@@ -114,7 +113,7 @@ class CluelessGame:
         # Get all the cards
         cards = ROOMS + WEAPONS + CHARACTERS
         current_player_index = 0
-
+        
         while len(cards) != 0:
             if current_player_index > (len(self.players) - 1):
                 current_player_index = 0
