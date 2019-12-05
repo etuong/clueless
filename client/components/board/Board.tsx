@@ -13,6 +13,7 @@ import STUDY from "../../assets/study.png";
 import "./Board.scss";
 import { useState, useEffect } from "react";
 import { ApiClient } from "../../ApiClient";
+import { prettifyName } from "../../utils/CharacterNameHelper";
 
 export const Board = props => {
   "use strict";
@@ -38,6 +39,56 @@ export const Board = props => {
   const [ballroomKitchen, setBallroomKitchen] = useState<string>("");
   const [kitchen, setKitchen] = useState<string>("");
 
+  const [isStudySelected, setIsStudySelected] = useState<boolean>(false);
+  const [isStudyHallSelected, setIsStudyHallSelected] = useState<boolean>(
+    false
+  );
+  const [isHallSelected, setIsHallSelected] = useState<boolean>(false);
+  const [isHallLoungeSelected, setIsHallLoungeSelected] = useState<boolean>(
+    false
+  );
+  const [isLoungeSelected, setIsLoungeSelected] = useState<boolean>(false);
+  const [isStudyLibrarySelected, setIsStudyLibrarySelected] = useState<boolean>(
+    false
+  );
+  const [isHallBilliardSelected, setIsHallBilliardSelected] = useState<boolean>(
+    false
+  );
+  const [isLoungeDiningSelected, setLoungeDiningSelected] = useState<boolean>(
+    false
+  );
+  const [isLibarySelected, setIsLibarySelected] = useState<boolean>(false);
+  const [isLibraryBilliardSelected, setIsLibraryBilliardSelected] = useState<
+    boolean
+  >(false);
+  const [isBilliardSelected, setIsBilliardSelected] = useState<boolean>(false);
+  const [isBilliardDiningSelected, setIsBilliardDiningSelected] = useState<
+    boolean
+  >(false);
+  const [isDiningSelected, setIsDiningSelected] = useState<boolean>(false);
+  const [
+    isLibraryConservatorySelected,
+    setIsLibraryConservatorySelected
+  ] = useState<boolean>(false);
+  const [isBilliardBallroomSelected, setIsBilliardBallroomSelected] = useState<
+    boolean
+  >(false);
+  const [isDiningKitchenSelected, setIsDiningKitchenSelected] = useState<
+    boolean
+  >(false);
+  const [isConservatorySelected, setIsConservatorySelected] = useState<boolean>(
+    false
+  );
+  const [
+    isConservatoryBallroomSelected,
+    setIsConservatoryBallroomSelected
+  ] = useState<boolean>(false);
+  const [isBallroomSelected, setIsBallroomSelected] = useState<boolean>(false);
+  const [isBallroomKitchenSelected, setIsBallroomKitchenSelected] = useState<
+    boolean
+  >(false);
+  const [isKitchenSelected, setIsKitchenSelected] = useState<boolean>(false);
+
   useEffect(() => {
     props.socket.on("update-board", async function() {
       resetBoard();
@@ -45,72 +96,77 @@ export const Board = props => {
       console.log(response);
       for (var key of Object.keys(response)) {
         const roomHall = response[key].room_hall;
-        const character = prettifyName(response[key].character_name);
+        const characterName = response[key].character_name;
+        const prettifiedCharacterName = prettifyName(characterName);
 
         switch (roomHall) {
           case "study":
-            setStudy(character);
+            setStudy(prettifiedCharacterName);
             break;
           case "study-hall":
-            setStudyHall(character);
+            setStudyHall(prettifiedCharacterName);
             break;
           case "hall":
-            setHall(character);
+            setHall(prettifiedCharacterName);
             break;
           case "hall-lounge":
-            setHallLounge(character);
+            setHallLounge(prettifiedCharacterName);
             break;
           case "lounge":
-            setLounge(character);
+            setLounge(prettifiedCharacterName);
             break;
           case "study-library":
-            setStudyLibrary(character);
+            setStudyLibrary(prettifiedCharacterName);
             break;
           case "hall-billiard":
-            setHallBilliard(character);
+            setHallBilliard(prettifiedCharacterName);
             break;
           case "lounge-dining":
-            setLoungeDining(character);
+            setLoungeDining(prettifiedCharacterName);
             break;
           case "library":
-            setLibrary(character);
+            setLibrary(prettifiedCharacterName);
             break;
           case "library-billiard":
-            setLibraryBilliard(character);
+            setLibraryBilliard(prettifiedCharacterName);
             break;
           case "billiard":
-            setBilliard(character);
+            setBilliard(prettifiedCharacterName);
             break;
           case "billiard-dining":
-            setBilliardDining(character);
+            setBilliardDining(prettifiedCharacterName);
             break;
           case "dining":
-            setDining(character);
+            setDining(prettifiedCharacterName);
             break;
           case "library-conservatory":
-            setLibraryConservatory(character);
+            setLibraryConservatory(prettifiedCharacterName);
             break;
           case "billiard-ballroom":
-            setBilliardBallroom(character);
+            setBilliardBallroom(prettifiedCharacterName);
             break;
           case "dining-kitchen":
-            setDiningKitchen(character);
+            setDiningKitchen(prettifiedCharacterName);
             break;
           case "conservatory":
-            setConservatory(character);
+            setConservatory(prettifiedCharacterName);
             break;
           case "conservatory-ballroom":
-            setConservatoryBallroom(character);
+            setConservatoryBallroom(prettifiedCharacterName);
             break;
           case "ballroom":
-            setBallroom(character);
+            setBallroom(prettifiedCharacterName);
             break;
           case "ballroom-kitchen":
-            setBallroomKitchen(character);
+            setBallroomKitchen(prettifiedCharacterName);
             break;
           case "kitchen":
-            setKitchen(character);
+            setKitchen(prettifiedCharacterName);
             break;
+        }
+
+        if (characterName === props.currentCharacter) {
+          // Switch and activate the available room/hall options
         }
       }
     });
@@ -139,72 +195,135 @@ export const Board = props => {
     setBallroom(EMPTY);
     setBallroomKitchen(EMPTY);
     setKitchen(EMPTY);
-  }
 
-  const prettifyName = name => {
-    let prettifiedName = "";
-    switch (name) {
-      case "miss_scarlet":
-        prettifiedName = "Miss Scarlet";
-        break;
-      case "professor_plum":
-        prettifiedName = "Prof Plum";
-        break;
-      case "colonel_mustard":
-        prettifiedName = "Col Mustard";
-        break;
-      case "mrs_peacock":
-        prettifiedName = "Mrs. Peacock";
-        break;
-      case "mr_green":
-        prettifiedName = "Mr. Green";
-        break;
-      case "mrs_white":
-        prettifiedName = "Mrs. White";
-        break;
-      default:
-        break;
-    }
-    return prettifiedName;
+    setIsStudySelected(false);
+    setIsStudyHallSelected(false);
+    setIsHallSelected(false);
+    setIsHallLoungeSelected(false);
+    setIsLoungeSelected(false);
+    setIsStudyLibrarySelected(false);
+    setIsHallBilliardSelected(false);
+    setLoungeDiningSelected(false);
+    setIsLibarySelected(false);
+    setIsLibraryBilliardSelected(false);
+    setIsBilliardSelected(false);
+    setIsBilliardDiningSelected(false);
+    setIsDiningSelected(false);
+    setIsLibraryConservatorySelected(false);
+    setIsBilliardBallroomSelected(false);
+    setIsDiningKitchenSelected(false);
+    setIsConservatorySelected(false);
+    setIsConservatoryBallroomSelected(false);
+    setIsBallroomSelected(false);
+    setIsBallroomKitchenSelected(false);
+    setIsKitchenSelected(false);
   };
 
   return (
     <table>
       <tbody>
         <tr>
-          <Room room={STUDY} character={study} />
-          <Hall horizontal={true} character={studyHall} />
-          <Room room={HALL} character={hall} />
-          <Hall horizontal={true} character={hallLounge} />
-          <Room room={LOUNGE} character={lounge} />
+          <Room room={STUDY} character={study} selected={isStudySelected} />
+          <Hall
+            horizontal={true}
+            character={studyHall}
+            selected={isStudyHallSelected}
+          />
+          <Room room={HALL} character={hall} selected={isHallSelected} />
+          <Hall
+            horizontal={true}
+            character={hallLounge}
+            selected={isHallLoungeSelected}
+          />
+          <Room room={LOUNGE} character={lounge} selected={isLoungeSelected} />
         </tr>
         <tr>
-          <Hall horizontal={false} character={studyLibrary} />
+          <Hall
+            horizontal={false}
+            character={studyLibrary}
+            selected={isStudyLibrarySelected}
+          />
           <Empty />
-          <Hall horizontal={false} character={hallBilliard} />
+          <Hall
+            horizontal={false}
+            character={hallBilliard}
+            selected={isHallBilliardSelected}
+          />
           <Empty />
-          <Hall horizontal={false} character={loungeDining} />
+          <Hall
+            horizontal={false}
+            character={loungeDining}
+            selected={isLoungeDiningSelected}
+          />
         </tr>
         <tr>
-          <Room room={LIBRARY} character={library} />
-          <Hall horizontal={true} character={libraryBilliard} />
-          <Room room={BILLIARD} character={billiard} />
-          <Hall horizontal={true} character={billiardDining} />
-          <Room room={DINING} character={dining} />
+          <Room
+            room={LIBRARY}
+            character={library}
+            selected={isLibarySelected}
+          />
+          <Hall
+            horizontal={true}
+            character={libraryBilliard}
+            selected={isLibraryBilliardSelected}
+          />
+          <Room
+            room={BILLIARD}
+            character={billiard}
+            selected={isBilliardSelected}
+          />
+          <Hall
+            horizontal={true}
+            character={billiardDining}
+            selected={isBilliardDiningSelected}
+          />
+          <Room room={DINING} character={dining} selected={isDiningSelected} />
         </tr>
         <tr>
-          <Hall horizontal={false} character={libraryConservatory} />
+          <Hall
+            horizontal={false}
+            character={libraryConservatory}
+            selected={isLibraryConservatorySelected}
+          />
           <Empty />
-          <Hall horizontal={false} character={billiardBallroom} />
+          <Hall
+            horizontal={false}
+            character={billiardBallroom}
+            selected={isBilliardBallroomSelected}
+          />
           <Empty />
-          <Hall horizontal={false} character={diningKitchen} />
+          <Hall
+            horizontal={false}
+            character={diningKitchen}
+            selected={isDiningKitchenSelected}
+          />
         </tr>
         <tr>
-          <Room room={CONSERVATORY} character={conservatory} />
-          <Hall horizontal={true} character={conservatoryBallroom} />
-          <Room room={BATHROOM} character={ballroom} />
-          <Hall horizontal={true} character={ballroomKitchen} />
-          <Room room={KITCHEN} character={kitchen} />
+          <Room
+            room={CONSERVATORY}
+            character={conservatory}
+            selected={isConservatorySelected}
+          />
+          <Hall
+            horizontal={true}
+            character={conservatoryBallroom}
+            selected={isConservatoryBallroomSelected}
+          />
+          <Room
+            room={BATHROOM}
+            character={ballroom}
+            selected={isBallroomSelected}
+          />
+          <Hall
+            horizontal={true}
+            character={ballroomKitchen}
+            selected={isBallroomKitchenSelected}
+          />
+          <Room
+            room={KITCHEN}
+            character={kitchen}
+            selected={isKitchenSelected}
+          />
         </tr>
       </tbody>
     </table>

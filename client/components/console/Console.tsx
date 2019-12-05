@@ -28,11 +28,18 @@ export const Console = props => {
     props.socket.on("new-player", function(newPlayer) {
       updateOutputMessage(newPlayer);
     });
+
+    props.socket.on("current-player", async tag => {
+      updateOutputMessage("It's " + tag + " turn!");
+    });
   }, []);
 
+  const getCurrentTime = () => {
+    return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true }) + " ";
+  }
+
   const updateOutputMessage = (msg: string) => {
-    console.log("message: " + msg);
-    outputMessage = outputMessage.concat(msg) + "\r\n\r\n";
+    outputMessage = outputMessage.concat(getCurrentTime() + msg) + "\r\n\r\n";
     setOutput(outputMessage);
     var textarea = document.getElementById("console_output");
     textarea!.scrollTop = textarea!.scrollHeight;

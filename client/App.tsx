@@ -6,6 +6,7 @@ import { Modal } from "./components/modal/Modal";
 import { Console } from "./components/console/Console";
 import { Cards } from "./components/Card/Cards";
 import { ApiClient } from "./ApiClient";
+import { Suspect } from "./components/console/Suspect";
 
 interface AppProps {}
 
@@ -13,7 +14,9 @@ interface AppState {
   disable: boolean;
   player: string;
   isPlaying: boolean;
-  nextPlayer: string;
+  currentPlayerHeader: string;
+  currentPlayer: string;
+  currentCharacter: string;
 }
 
 export default class App extends React.Component<AppProps, AppState> {
@@ -23,7 +26,9 @@ export default class App extends React.Component<AppProps, AppState> {
       disable: true,
       player: "",
       isPlaying: false,
-      nextPlayer: "Tom"
+      currentPlayerHeader: "",
+      currentPlayer: "",
+      currentCharacter: ""
     };
     this.socket = this.io.connect("http://localhost:3001", { reconnect: true });
   }
@@ -37,11 +42,17 @@ export default class App extends React.Component<AppProps, AppState> {
       this.setPlayerDeck(response);
       this.enableGame();
     });
+
+    this.socket.on("current-player", async msg => {
+      this.setState({
+        currentPlayerHeader: msg
+      });
+    });
   }
 
   private socket;
   private io = require("socket.io-client");
-  
+
   playerCards = new Array();
 
   enableGame = () => this.setState({ disable: false });
@@ -49,7 +60,7 @@ export default class App extends React.Component<AppProps, AppState> {
   setPlayerName = player => {
     this.setState({ player: player });
     this.socket.emit("channel-new-player", player);
-  }
+  };
 
   setIsPlaying = async () => {
     const flag = await ApiClient.get("/start");
@@ -58,8 +69,19 @@ export default class App extends React.Component<AppProps, AppState> {
 
   handleStartButton = async () => {
     const { player } = this.state;
-    await ApiClient.post("/start");
+    const response = await ApiClient.post("/start");
+    const current_player = response["current_player"];
+    const current_character = Suspect[response[current_player].character_name];
+    this.socket.emit(
+      "channel-current-player",
+      current_player,
+      current_character
+    );
     this.socket.emit("channel-start", player);
+    this.setState({
+      currentPlayer: current_player,
+      currentCharacter: current_character
+    });
   };
 
   setPlayerDeck = response => {
@@ -69,7 +91,14 @@ export default class App extends React.Component<AppProps, AppState> {
   };
 
   render() {
-    const { disable, player, isPlaying, nextPlayer } = this.state;
+    const {
+      disable,
+      player,
+      isPlaying,
+      currentPlayerHeader,
+      currentPlayer,
+      currentCharacter
+    } = this.state;
     if (!isPlaying) {
       return (
         <>
@@ -79,9 +108,17 @@ export default class App extends React.Component<AppProps, AppState> {
               START!
             </button>
           )}
-          {!disable && <button className="next-player">{nextPlayer}'s Turn</button>}
+          {!disable && (
+            <button className="current-player">
+              {currentPlayerHeader} Turn
+            </button>
+          )}
           <div className={`app ${disable && "disable"}`}>
-            <Board socket={this.socket} />
+            <Board
+              socket={this.socket}
+              currentPlayer={currentPlayer}
+              currentCharacter={currentCharacter}
+            />
             <div className="section">
               <Cards set={this.playerCards} player={player} />
               <div className="section-child">
