@@ -50,8 +50,7 @@ class PlayerMoveApi(Resource):
         parser.add_argument('location', type=str)
         args = parser.parse_args()
 
-        current_player = [*game.players.keys()][game.current_player_index]
-        if current_player != player_name:
+        if game.current_player != player_name:
             return jsonify(error="It is not your turn to make a move")
 
         player = game.players.get(player_name)
@@ -85,14 +84,13 @@ class PlayerMoveApi(Resource):
             move_accepted = False
 
         if move_accepted:
-            if current_location in game.hallways.keys():
-                game.hallways[current_location] = True
-                game.current_player_index += 1
-                if game.current_player_index > len(game.players):
-                    game.current_player_index = 0
-            return dict(location=new_location)
+            if new_location in game.hallways.keys():
+                game.hallways[new_location] = True
+                game.current_player = game.players.get(game.current_player).next_player
+
+            return jsonify(location=new_location, current_player=game.current_player)
         else:
-            return dict(error="Unacceptable Location Selected")
+            return jsonify(error="Unacceptable Location Selected")
 
 
 class AccusationsApi(Resource):
@@ -106,8 +104,7 @@ class AccusationsApi(Resource):
         parser.add_argument('accused_room')
         args = parser.parse_args()
 
-        current_player = [*game.players.keys()][game.current_player_index]
-        if current_player != player_name:
+        if game.current_player != player_name:
             return jsonify(error="It is not your turn to make an accusation")
 
         guessed_answer = (args.accused_character, args.accused_room, args.accused_weapon)
@@ -115,10 +112,9 @@ class AccusationsApi(Resource):
         if guessed_answer == game.game_answer:
             return {'guess': True}
         else:
-            game.current_player_index += 1
-            if game.current_player_index > len(game.players):
-                game.current_player_index = 0
-            return {'guess': False}
+            game.current_player = game.players.get(game.current_player).next_player
+
+            return jsonify(guess=False, current_player=game.current_player)
 
 
 class SuggestionsApi(Resource):
@@ -132,40 +128,58 @@ class SuggestionsApi(Resource):
         parser.add_argument('suggested_room')
         args = parser.parse_args()
 
-        current_player = [*game.players.keys()][game.current_player_index]
-        if current_player != player_name:
+        if game.current_player != player_name:
             return jsonify(error="It is not your turn to make a suggestion")
 
-        if game.players.get(player_name).room_hall != args.accused_room:
+        if game.players.get(player_name).room_hall != args.suggested_room:
             return jsonify(error="You must be in the room of your suggestion")
 
         for player in game.players.values():
-            if player.character_name == args.accused_character:
-                player.move(args.accused_room)
+            if player.character_name == args.suggested_character:
+                player.move(args.suggested_room)
 
-        guessed_answer = (args.accused_character, args.accused_room, args.accused_weapon)
-        #TODO Players take turns disproving suggestions
-        game.current_player_index += 1
-        if game.current_player_index > len(game.players):
-            game.current_player_index = 0
+        guessed_answer = (args.suggested_character, args.suggested_room, args.suggested_weapon)
+
+        game.suggesting_player = game.current_player
+        
+        game.current_player = game.players.get(game.current_player).next_player
+
+        return jsonify(current_player=game.current_player)
+
+
+class DisproveSuggestionApi(Resource):
+    def put(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('card')
+
+        args = parser.parse_args()
+
+        if args.card is None:
+            game.current_player = game.players.get(game.current_player).next_player
+        else:
+            game.current_player = game.suggesting_player
+            game.suggesting_player = None
+
+        return jsonify(current_player = game.current_player)
 
 
 class StartApi(Resource):
     def post(self):
         # When game begins playing, distribute cards to the players
         game.distribute_cards()
+        game.set_player_order()
 
         response = dict()
 
         for name, player in game.players.items():
             response[name] = vars(player)
 
+        response['current_player'] = game.current_player
         return response
     
     def get(self):
         # Return game state
         return {'isPlaying': game.game_started}
-
 
 api.add_resource(PlayerApi, '/api/player/<player_name>')
 api.add_resource(PlayersApi, '/api/players')
@@ -173,6 +187,7 @@ api.add_resource(PlayerMoveApi, '/api/player/move/<player_name>')
 api.add_resource(AccusationsApi, '/api/player/accusation/<player_name>')
 api.add_resource(SuggestionsApi, '/api/player/suggestions/<player_name>')
 api.add_resource(StartApi, '/api/start')
+api.add_resource(DisproveSuggestionApi, '/api/player/disprove')
 
 if __name__ == "__main__":
     application.debug = True

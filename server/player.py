@@ -15,7 +15,7 @@ class Player:
         # Boolean flag that states whether player has made an accusation
         self.made_accusation = False
 
-        # Object that determines the immediate next player after this player
+        # Name that determines the immediate next player after this player
         self.next_player = None
 
     def move(self, room_or_hall):

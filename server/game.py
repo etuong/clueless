@@ -79,13 +79,13 @@ class CluelessGame:
         self.rooms['kitchen'] = Room('kitchen', 'study', ['dining-kitchen', 'ballroom-kitchen']) 
 
         self.hallways = HALLWAY_STATE
-
         # Player dictionary -> key: player name, value: player properties
         # Using an ordered dict to preserve ordering of player registration
         self.players = OrderedDict()
 
         self.game_answer = self.create_game_answer()
-        self.current_player_index = 0
+        self.current_player = None
+        self.suggesting_player = None
         self.game_started = False
 
 
@@ -131,3 +131,14 @@ class CluelessGame:
             # Move on to the next player
             current_player_index += 1
         self.game_started = True
+
+
+    def set_player_order(self):
+        for player_index, player_object in enumerate(self.players.values()):
+            if player_index + 1 < len(self.players.values()):
+                player_object.next_player = [*self.players.keys()][player_index + 1]
+            else:
+                player_object.next_player = [*self.players.keys()][0]
+
+        self.current_player = [*self.players.keys()][0]
+        return
