@@ -9,7 +9,7 @@ export const Room = props => {
     <td
       style={{ backgroundImage: `url(${props.room})` }}
       className={`room ${props.selected && "path"}`}
-      onClick={props.selected && cellClick}
+      onClick={props.selected ? cellClick : undefined}
     >
       <div className={props.character ? "player in-room" : ""}>
         {props.character}

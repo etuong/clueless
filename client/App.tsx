@@ -71,11 +71,11 @@ export default class App extends React.Component<AppProps, AppState> {
     const { player } = this.state;
     const response = await ApiClient.post("/start");
     const current_player = response["current_player"];
-    const current_character = Suspect[response[current_player].character_name];
+    const current_character = response[current_player].character_name;
     this.socket.emit(
       "channel-current-player",
       current_player,
-      current_character
+      Suspect[current_character]
     );
     this.socket.emit("channel-start", player);
     this.setState({
@@ -96,7 +96,6 @@ export default class App extends React.Component<AppProps, AppState> {
       player,
       isPlaying,
       currentPlayerHeader,
-      currentPlayer,
       currentCharacter
     } = this.state;
     if (!isPlaying) {
@@ -114,11 +113,7 @@ export default class App extends React.Component<AppProps, AppState> {
             </button>
           )}
           <div className={`app ${disable && "disable"}`}>
-            <Board
-              socket={this.socket}
-              currentPlayer={currentPlayer}
-              currentCharacter={currentCharacter}
-            />
+            <Board socket={this.socket} currentCharacter={currentCharacter} />
             <div className="section">
               <Cards set={this.playerCards} player={player} />
               <div className="section-child">

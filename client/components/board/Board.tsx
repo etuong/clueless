@@ -89,88 +89,163 @@ export const Board = props => {
   >(false);
   const [isKitchenSelected, setIsKitchenSelected] = useState<boolean>(false);
 
-  useEffect(() => {
+  useEffect(() => {    
     props.socket.on("update-board", async function() {
       resetBoard();
       const response = await ApiClient.get("/players");
-      console.log(response);
+
       for (var key of Object.keys(response)) {
         const roomHall = response[key].room_hall;
         const characterName = response[key].character_name;
         const prettifiedCharacterName = prettifyName(characterName);
 
-        switch (roomHall) {
-          case "study":
-            setStudy(prettifiedCharacterName);
-            break;
-          case "study-hall":
-            setStudyHall(prettifiedCharacterName);
-            break;
-          case "hall":
-            setHall(prettifiedCharacterName);
-            break;
-          case "hall-lounge":
-            setHallLounge(prettifiedCharacterName);
-            break;
-          case "lounge":
-            setLounge(prettifiedCharacterName);
-            break;
-          case "study-library":
-            setStudyLibrary(prettifiedCharacterName);
-            break;
-          case "hall-billiard":
-            setHallBilliard(prettifiedCharacterName);
-            break;
-          case "lounge-dining":
-            setLoungeDining(prettifiedCharacterName);
-            break;
-          case "library":
-            setLibrary(prettifiedCharacterName);
-            break;
-          case "library-billiard":
-            setLibraryBilliard(prettifiedCharacterName);
-            break;
-          case "billiard":
-            setBilliard(prettifiedCharacterName);
-            break;
-          case "billiard-dining":
-            setBilliardDining(prettifiedCharacterName);
-            break;
-          case "dining":
-            setDining(prettifiedCharacterName);
-            break;
-          case "library-conservatory":
-            setLibraryConservatory(prettifiedCharacterName);
-            break;
-          case "billiard-ballroom":
-            setBilliardBallroom(prettifiedCharacterName);
-            break;
-          case "dining-kitchen":
-            setDiningKitchen(prettifiedCharacterName);
-            break;
-          case "conservatory":
-            setConservatory(prettifiedCharacterName);
-            break;
-          case "conservatory-ballroom":
-            setConservatoryBallroom(prettifiedCharacterName);
-            break;
-          case "ballroom":
-            setBallroom(prettifiedCharacterName);
-            break;
-          case "ballroom-kitchen":
-            setBallroomKitchen(prettifiedCharacterName);
-            break;
-          case "kitchen":
-            setKitchen(prettifiedCharacterName);
-            break;
-        }
+        setRoomOrHall(roomHall, prettifiedCharacterName);
 
         if (characterName === props.currentCharacter) {
-          // Switch and activate the available room/hall options
+          const availableMoves = response[key].available_moves;
+          for (var counter in availableMoves) {
+            setRoomOrHallIsSelected(availableMoves[counter]);
+          }
         }
       }
     });
-  }, []);
+  });
+
+  const setRoomOrHall = (roomHall, prettifiedCharacterName) => {
+    switch (roomHall) {
+      case "study":
+        setStudy(prettifiedCharacterName);
+        break;
+      case "study-hall":
+        setStudyHall(prettifiedCharacterName);
+        break;
+      case "hall":
+        setHall(prettifiedCharacterName);
+        break;
+      case "hall-lounge":
+        setHallLounge(prettifiedCharacterName);
+        break;
+      case "lounge":
+        setLounge(prettifiedCharacterName);
+        break;
+      case "study-library":
+        setStudyLibrary(prettifiedCharacterName);
+        break;
+      case "hall-billiard":
+        setHallBilliard(prettifiedCharacterName);
+        break;
+      case "lounge-dining":
+        setLoungeDining(prettifiedCharacterName);
+        break;
+      case "library":
+        setLibrary(prettifiedCharacterName);
+        break;
+      case "library-billiard":
+        setLibraryBilliard(prettifiedCharacterName);
+        break;
+      case "billiard":
+        setBilliard(prettifiedCharacterName);
+        break;
+      case "billiard-dining":
+        setBilliardDining(prettifiedCharacterName);
+        break;
+      case "dining":
+        setDining(prettifiedCharacterName);
+        break;
+      case "library-conservatory":
+        setLibraryConservatory(prettifiedCharacterName);
+        break;
+      case "billiard-ballroom":
+        setBilliardBallroom(prettifiedCharacterName);
+        break;
+      case "dining-kitchen":
+        setDiningKitchen(prettifiedCharacterName);
+        break;
+      case "conservatory":
+        setConservatory(prettifiedCharacterName);
+        break;
+      case "conservatory-ballroom":
+        setConservatoryBallroom(prettifiedCharacterName);
+        break;
+      case "ballroom":
+        setBallroom(prettifiedCharacterName);
+        break;
+      case "ballroom-kitchen":
+        setBallroomKitchen(prettifiedCharacterName);
+        break;
+      case "kitchen":
+        setKitchen(prettifiedCharacterName);
+        break;
+    }
+  };
+
+  const setRoomOrHallIsSelected = roomOrHall => {
+    switch (roomOrHall) {
+      case "study":
+        setIsStudySelected(true);
+        break;
+      case "study-hall":
+        setIsStudyHallSelected(true);
+        break;
+      case "hall":
+        setIsHallSelected(true);
+        break;
+      case "hall-lounge":
+        setIsHallLoungeSelected(true);
+        break;
+      case "lounge":
+        setIsLoungeSelected(true);
+        break;
+      case "study-library":
+        setIsStudyLibrarySelected(true);
+        break;
+      case "hall-billiard":
+        setIsHallBilliardSelected(true);
+        break;
+      case "lounge-dining":
+        setLoungeDiningSelected(true);
+        break;
+      case "library":
+        setIsLibarySelected(true);
+        break;
+      case "library-billiard":
+        setIsLibraryBilliardSelected(true);
+        break;
+      case "billiard":
+        setIsBilliardSelected(true);
+        break;
+      case "billiard-dining":
+        setIsBilliardDiningSelected(true);
+        break;
+      case "dining":
+        setIsDiningSelected(true);
+        break;
+      case "library-conservatory":
+        setIsLibraryConservatorySelected(true);
+        break;
+      case "billiard-ballroom":
+        setIsBilliardBallroomSelected(true);
+        break;
+      case "dining-kitchen":
+        setIsDiningKitchenSelected(true);
+        break;
+      case "conservatory":
+        setIsConservatorySelected(true);
+        break;
+      case "conservatory-ballroom":
+        setIsConservatoryBallroomSelected(true);
+        break;
+      case "ballroom":
+        setIsBallroomSelected(true);
+        break;
+      case "ballroom-kitchen":
+        setIsBallroomKitchenSelected(true);
+        break;
+      case "kitchen":
+        setIsKitchenSelected(true);
+        break;
+    }
+  };
 
   const resetBoard = () => {
     const EMPTY = "";

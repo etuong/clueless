@@ -6,7 +6,7 @@ export const Hall = props => {
   };
 
   return (
-    <td onClick={props.selected && cellClick}>
+    <td onClick={props.selected ? cellClick : undefined}>
       <div
         className={`${props.horizontal ? "horizontal-hall" : "vertical-hall"}
         ${props.selected ? "path" : ""}`}
