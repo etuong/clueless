@@ -77,6 +77,9 @@ class PlayerMoveApi(Resource):
                 game.hallways[new_location] = True
                 player.available_moves = new_location.split('-')
                 game.current_player = game.players.get(game.current_player).next_player
+
+                if game.players.get(game.current_player).made_accusation:
+                    game.current_player = game.players.get(game.current_player).next_player
             else:
                 player.available_moves = game.rooms.get(new_location).hallways
                 player.allow_suggestion = True
@@ -166,6 +169,10 @@ class DisproveSuggestionApi(Resource):
             game.current_player = game.players.get(game.current_player).next_player
         else:
             game.current_player = game.players.get(game.suggesting_player).next_player
+
+            if game.players.get(game.current_player).made_accusation:
+                game.current_player = game.players.get(game.current_player).next_player
+                
             game.suggesting_player = None
             game.player_moved = False
 
