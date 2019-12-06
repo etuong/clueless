@@ -18,5 +18,11 @@ class Player:
         # Name that determines the immediate next player after this player
         self.next_player = None
 
+        # Valid locations for the player to move
+        self.available_moves = list()
+
+        # Boolean flag for if the player can make a suggestion that turn
+        self.allow_suggestion = False
+
     def move(self, room_or_hall):
         self.room_hall = room_or_hall

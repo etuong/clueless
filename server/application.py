@@ -15,9 +15,7 @@ class PlayerApi(Resource):
     # Get the player information base on the player's name
     def get(self, player_name):
         player = game.players.get(player_name)
-        player_info = dict(name=player.player_name, character_name=player.character_name,
-                            room_hall=player.room_hall, cards=player.cards)
-        return player_info
+        return vars(player)
 
     # Create a new player and return its info
     def put(self, player_name):
@@ -26,15 +24,12 @@ class PlayerApi(Resource):
         args = parser.parse_args()
         player = game.create_player(player_name, args.get('character_name'))
         game.hallways[player.room_hall] = False
-        player_info = dict(name=player.player_name, character_name=player.character_name,
-                            room_hall=player.room_hall, cards=player.cards)
-        return player_info
+        return vars(player)
 
 
 class PlayersApi(Resource):
     def get(self):
         response = dict()
-
         for name, player in game.players.items():
             response[name] = vars(player)
         return response
@@ -43,7 +38,7 @@ class PlayersApi(Resource):
 class PlayerMoveApi(Resource):    
     def get(self, player_name):
         player = game.players.get(player_name)
-        return dict(location=player.room_hall)
+        return dict(available_moves=player.available_moves)
 
     def put(self, player_name):
         parser = reqparse.RequestParser()
@@ -53,25 +48,16 @@ class PlayerMoveApi(Resource):
         if game.current_player != player_name:
             return jsonify(error="It is not your turn to make a move")
 
+        if game.player_moved:
+            return jsonify(error="Player moves are not allowed right now")
+
         player = game.players.get(player_name)
         current_location = player.room_hall
         new_location = args.get('location')
 
-        acceptable_locations = None
-
-        if current_location in game.hallways.keys():
-            acceptable_locations = current_location.split('-')
-        else:
-            acceptable_locations = game.rooms.get(current_location).hallways
-            secret_passage = game.rooms.get(current_location).secret_passage_connection
-            if secret_passage:
-                acceptable_locations.append(secret_passage)
-
-        print(acceptable_locations)
-
         move_accepted = False
 
-        if new_location in acceptable_locations:
+        if new_location in player.available_moves:
             if game.hallways.get(new_location):
                 player.move(new_location)
                 move_accepted = True
@@ -86,7 +72,15 @@ class PlayerMoveApi(Resource):
         if move_accepted:
             if new_location in game.hallways.keys():
                 game.hallways[new_location] = True
+                player.available_moves = new_location.split('-')
                 game.current_player = game.players.get(game.current_player).next_player
+            else:
+                player.available_moves = game.rooms.get(new_location).hallways
+                player.allow_suggestion = True
+                secret_passage = game.rooms.get(new_location).secret_passage_connection
+                if secret_passage:
+                    player.available_moves.append(secret_passage)
+                game.player_moved = True
 
             return jsonify(location=new_location, current_player=game.current_player)
         else:
@@ -107,10 +101,12 @@ class AccusationsApi(Resource):
         if game.current_player != player_name:
             return jsonify(error="It is not your turn to make an accusation")
 
+        game.players.get(game.current_player).made_accusation = True
+
         guessed_answer = (args.accused_character, args.accused_room, args.accused_weapon)
 
         if guessed_answer == game.game_answer:
-            return {'guess': True}
+            return jsonify(guess=True, current_player=game.current_player)
         else:
             game.current_player = game.players.get(game.current_player).next_player
 
@@ -134,13 +130,22 @@ class SuggestionsApi(Resource):
         if game.players.get(player_name).room_hall != args.suggested_room:
             return jsonify(error="You must be in the room of your suggestion")
 
+        if game.suggesting_player is not None:
+            return jsonify(error="Someone else is already making a suggestion")
+
+        if not game.players.get(game.current_player).allow_suggestion:
+            return jsonify(error="You cannot make a suggestion right now")
+
         for player in game.players.values():
-            if player.character_name == args.suggested_character:
+            if player.character_name == args.suggested_character and player.player_name != player_name:
                 player.move(args.suggested_room)
+                player.allow_suggestion = True
 
         guessed_answer = (args.suggested_character, args.suggested_room, args.suggested_weapon)
 
         game.suggesting_player = game.current_player
+
+        game.players.get(game.current_player).allow_suggestion = False
         
         game.current_player = game.players.get(game.current_player).next_player
 
@@ -157,8 +162,10 @@ class DisproveSuggestionApi(Resource):
         if args.card is None:
             game.current_player = game.players.get(game.current_player).next_player
         else:
-            game.current_player = game.suggesting_player
+            game.current_player = game.players.get(game.suggesting_player).next_player
             game.suggesting_player = None
+            game.player_moved = False
+
 
         return jsonify(current_player = game.current_player)
 

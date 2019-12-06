@@ -87,6 +87,7 @@ class CluelessGame:
         self.current_player = None
         self.suggesting_player = None
         self.game_started = False
+        self.player_moved = False
 
 
     def create_game_answer(self):
@@ -103,9 +104,14 @@ class CluelessGame:
 
     # Create a new player and assign an initial starting position on the board
     def create_player(self, player_name, character_name):
-        self.players[player_name] = Player(player_name, character_name, 
+        new_player = Player(player_name, character_name, 
                                             INITIAL_PLAYER_LOCATIONS.get(character_name))
-        return self.players[player_name]
+
+        new_player.available_moves =  new_player.room_hall.split('-')
+
+        self.players[player_name] = new_player
+
+        return new_player
 
 
     # Algorithm to distribute random cards to the players
