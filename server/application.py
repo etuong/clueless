@@ -28,6 +28,7 @@ class PlayerApi(Resource):
 
 
 class PlayersApi(Resource):
+    # Return information of all the players
     def get(self):
         response = dict()
         for name, player in game.players.items():
@@ -36,10 +37,12 @@ class PlayersApi(Resource):
 
 
 class PlayerMoveApi(Resource):    
+    # Return the player's current location
     def get(self, player_name):
         player = game.players.get(player_name)
         return dict(available_moves=player.available_moves)
 
+    # Update the player's location
     def put(self, player_name):
         parser = reqparse.RequestParser()
         parser.add_argument('location', type=str)
