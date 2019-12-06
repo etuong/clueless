@@ -7,5 +7,6 @@ export enum Room {
   Kitchen = "Kitchen",
   Library = "Library",
   Lounge = "Lounge",
-  Study = "Study"
+  Study = "Study",
+  Empty = "",
 }

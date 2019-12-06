@@ -13,10 +13,9 @@ interface AppProps {}
 interface AppState {
   disable: boolean;
   player: string;
+  character: string;
   isPlaying: boolean;
   currentPlayerHeader: string;
-  currentPlayer: string;
-  currentCharacter: string;
 }
 
 export default class App extends React.Component<AppProps, AppState> {
@@ -25,10 +24,9 @@ export default class App extends React.Component<AppProps, AppState> {
     this.state = {
       disable: true,
       player: "",
+      character: "",
       isPlaying: false,
-      currentPlayerHeader: "",
-      currentPlayer: "",
-      currentCharacter: ""
+      currentPlayerHeader: ""
     };
     this.socket = this.io.connect("http://localhost:3001", { reconnect: true });
   }
@@ -57,8 +55,8 @@ export default class App extends React.Component<AppProps, AppState> {
 
   enableGame = () => this.setState({ disable: false });
 
-  setPlayerName = player => {
-    this.setState({ player: player });
+  setPlayerName = (player, character) => {
+    this.setState({ player: player, character: character });
     this.socket.emit("channel-new-player", player);
   };
 
@@ -72,16 +70,13 @@ export default class App extends React.Component<AppProps, AppState> {
     const response = await ApiClient.post("/start");
     const current_player = response["current_player"];
     const current_character = response[current_player].character_name;
+    this.socket.emit("channel-start", player);
     this.socket.emit(
       "channel-current-player",
       current_player,
+      current_character,
       Suspect[current_character]
     );
-    this.socket.emit("channel-start", player);
-    this.setState({
-      currentPlayer: current_player,
-      currentCharacter: current_character
-    });
   };
 
   setPlayerDeck = response => {
@@ -94,9 +89,9 @@ export default class App extends React.Component<AppProps, AppState> {
     const {
       disable,
       player,
+      character,
       isPlaying,
-      currentPlayerHeader,
-      currentCharacter
+      currentPlayerHeader
     } = this.state;
     if (!isPlaying) {
       return (
@@ -113,11 +108,15 @@ export default class App extends React.Component<AppProps, AppState> {
             </button>
           )}
           <div className={`app ${disable && "disable"}`}>
-            <Board socket={this.socket} currentCharacter={currentCharacter} />
+            <Board socket={this.socket} character={character} />
             <div className="section">
               <Cards set={this.playerCards} player={player} />
               <div className="section-child">
-                <Console player={player} socket={this.socket} />
+                <Console
+                  player={player}
+                  character={character}
+                  socket={this.socket}
+                />
                 <Notes />
               </div>
             </div>

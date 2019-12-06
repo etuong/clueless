@@ -7,21 +7,25 @@ import { Room } from "./Room";
 
 export const Console = props => {
   const [player, setPlayer] = useState<string>("");
+  const [character, setCharacter] = useState<string>("");
   const [output, setOutput] = useState<string>("");
   const [weapon, setWeapon] = useState<string>("");
-  const [room] = useState<string>(Room.Study);
+  const [room] = useState<string>(Room.Empty);
   const [suspect, setSuspect] = useState<string>("");
 
   let outputMessage = "";
 
   useEffect(() => {
     setPlayer(props.player);
+    setCharacter(props.character);
   });
 
   useEffect(() => {
-    setPlayer(props.player);
-
     props.socket.on("message", function(msg) {
+      updateOutputMessage(msg);
+    });
+
+    props.socket.on("start", function(msg) {
       updateOutputMessage(msg);
     });
 
@@ -70,7 +74,7 @@ export const Console = props => {
   });
 
   const suspects = Object.keys(Suspect).filter(item => {
-    return isNaN(Number(item));
+    return isNaN(Number(item)) && item !== character;
   });
 
   const rooms = Object.keys(Room).filter(item => {

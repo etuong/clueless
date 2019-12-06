@@ -1,6 +1,7 @@
 var app = require("express")();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
+var currentCharacter = "";
 
 io.on("connection", function(socket) {
   console.log("User connected");
@@ -11,10 +12,16 @@ io.on("connection", function(socket) {
     io.emit("message", sentence);
   });
 
-  socket.on("channel-current-player", function(current_player, current_character) {
-    const tag = current_player + " (" + current_character + ")'s";
+  socket.on("channel-current-player", function(
+    current_player,
+    current_character,
+    prettifiedCurrentCharacter
+  ) {
+    currentCharacter = current_character;
+    const tag = current_player + " (" + prettifiedCurrentCharacter + ")'s";
     console.log(tag);
     io.emit("current-player", tag);
+    io.emit("update-board", current_character);
   });
 
   socket.on("channel-new-player", function(player) {
@@ -27,7 +34,6 @@ io.on("connection", function(socket) {
     const response = "Game is started by " + from + "!";
     console.log(response);
     io.emit("start", response);
-    io.emit("update-board");
   });
 
   socket.on("disconnect", function() {

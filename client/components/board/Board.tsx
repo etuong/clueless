@@ -89,8 +89,8 @@ export const Board = props => {
   >(false);
   const [isKitchenSelected, setIsKitchenSelected] = useState<boolean>(false);
 
-  useEffect(() => {    
-    props.socket.on("update-board", async function() {
+  useEffect(() => {
+    props.socket.on("update-board", async function(currentCharacter) {
       resetBoard();
       const response = await ApiClient.get("/players");
 
@@ -101,7 +101,7 @@ export const Board = props => {
 
         setRoomOrHall(roomHall, prettifiedCharacterName);
 
-        if (characterName === props.currentCharacter) {
+        if (props.character === currentCharacter && characterName === currentCharacter) {
           const availableMoves = response[key].available_moves;
           for (var counter in availableMoves) {
             setRoomOrHallIsSelected(availableMoves[counter]);
