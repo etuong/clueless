@@ -29,6 +29,14 @@ io.on("connection", function(socket) {
     io.emit("update-board", currentCharacter);
   });
 
+  socket.on("channel-player-move-only", function(tag) {
+    io.emit("player-move", tag);
+  });
+
+  socket.on("channel-disapprove", function(msg, a, b, c) {
+    io.emit("disapprove", msg, a, b, c);
+  });
+
   socket.on("channel-new-player", function(player) {
     const response = player + " has joined the game!";
     console.log(response);

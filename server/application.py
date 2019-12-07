@@ -48,30 +48,39 @@ class PlayerMoveApi(Resource):
         parser.add_argument('location', type=str)
         args = parser.parse_args()
 
+        # Can't move if it's not your turn
         if game.current_player != player_name:
             return jsonify(error="It is not your turn to make a move")
-
         if game.player_moved:
             return jsonify(error="Player moves are not allowed right now")
 
         player = game.players.get(player_name)
         new_location = args.get('location')
 
+        # If the new location is a hall
         if new_location in game.hallways.keys():
             game.hallways[new_location] = True
-            player.available_moves = new_location.split('-')
-            game.current_player = game.players.get(game.current_player).next_player
 
-            if game.players.get(game.current_player).made_accusation:
-                game.current_player = game.players.get(game.current_player).next_player
+            # Every hall needs to be a tuple of two rooms
+            player.available_moves = new_location.split('-')
+
+            # Player can't make suggestion, proceed with the next player's turn
+            current_player = game.players.get(game.current_player)
+            game.current_player = current_player.next_player
+
+            # If the new current player has already made accusation, then skip and grab the next player
+            if current_player.made_accusation:
+                game.current_player = current_player.next_player
+        # If the new location is a room
         else:
-            player.available_moves = game.rooms.get(new_location).hallways
+            # Reassign the player's next available moves
+            player.available_moves = game.rooms.get(new_location).get_move_options()
+
+            # Allow the player to make suggestions
             player.allow_suggestion = True
-            secret_passage = game.rooms.get(new_location).secret_passage_connection
-            if secret_passage:
-                player.available_moves.append(secret_passage)
-            player.move(new_location)
-            game.player_moved = True
+
+        player.move(new_location)
+        game.player_moved = True
 
         return jsonify(location=new_location, current_player=game.current_player)
 
@@ -119,8 +128,7 @@ class SuggestionsApi(Resource):
 
         if game.current_player != player_name:
             return jsonify(error="It is not your turn to make a suggestion")
-        print(game.players.get(player_name).room_hall)
-        print(suggested_room)
+
         if game.players.get(player_name).room_hall != suggested_room:
             return jsonify(error="You must be in the room of your suggestion")
 
@@ -132,36 +140,42 @@ class SuggestionsApi(Resource):
 
         for player in game.players.values():
             if player.character_name == suggested_character and player.player_name != player_name:
-                player.move(suggested_room)
-                player.allow_suggestion = True
+                player.move(suggested_room)                
 
         guessed_answer = (suggested_character, suggested_room, suggested_weapon)
 
+        # Keep a reference of the suggesting player
         game.suggesting_player = game.current_player
 
+        # Turn off this flag so current player can't make any more suggestion on this round
         game.players.get(game.current_player).allow_suggestion = False
         
-        game.current_player = game.players.get(game.current_player).next_player
+        # Get the next player and allow him to disapprove
+        game.current_player = game.players.get(game.current_player).next_player        
+        game.players.get(game.current_player).allow_disapproval = True
 
-        return jsonify(current_player=game.current_player)
+        return jsonify(current_player_info=vars(game.players.get(game.current_player)), current_character=game.players.get(game.current_player).character_name, suggesting_player=game.suggesting_player)
 
 
 class DisproveSuggestionApi(Resource):
     def put(self):
         parser = reqparse.RequestParser()
         parser.add_argument('card')
-
         args = parser.parse_args()
 
+        current_player = game.players.get(game.current_player)
+
+        # If player does not have the cards to disapprove, then proceed to the next player
         if args.card is None:
-            game.current_player = game.players.get(game.current_player).next_player
+            game.current_player = current_player.next_player
         else:
             game.current_player = game.players.get(game.suggesting_player).next_player
 
-            if game.players.get(game.current_player).made_accusation:
-                game.current_player = game.players.get(game.current_player).next_player
+            if current_player.made_accusation:
+                game.current_player = current_player.next_player
                 
             game.suggesting_player = None
+            game.allow_disapproval = False
             game.player_moved = False
 
 

@@ -1,7 +1,16 @@
 import React from "react";
 import "./Cards.scss";
+import { useState, useEffect } from "react";
 
 export const Cards = props => {
+  const [disapprove, setDisapprove] = useState<boolean>(false);
+
+  useEffect(() => {
+    props.socket.on("disapprove", function(msg, a, b, c) {
+      setDisapprove(a.player_name === props.player ? a.allow_disapproval : false)
+    });
+  });
+
   const shuffleArray = array => {
     let i = array.length - 1;
     for (; i > 0; i--) {
@@ -19,7 +28,13 @@ export const Cards = props => {
       <p className="title">{props.player && `${props.player}'s`} Cards</p>
 
       {shuffledSet.map((card, idx) => {
-        return <img key={idx} src={card} />;
+        return (
+          <img
+            key={idx}
+            src={card}
+            className={`${disapprove && "disapprove"}`}
+          />
+        );
       })}
     </div>
   );

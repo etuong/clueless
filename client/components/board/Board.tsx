@@ -106,7 +106,8 @@ export const Board = props => {
         if (
           props.character === currentCharacter &&
           characterName === currentCharacter &&
-          !player.allow_suggestion
+          !player.allow_suggestion &&
+          !player.allow_disapproval
         ) {
           const availableMoves = player.available_moves;
           for (var counter in availableMoves) {
@@ -137,67 +138,67 @@ export const Board = props => {
   const setRoomOrHall = (roomHall, prettifiedCharacterName) => {
     switch (roomHall) {
       case "study":
-        setStudy(prettifiedCharacterName);
+        setStudy(cleanRoom(study, prettifiedCharacterName));
         break;
       case "study-hall":
-        setStudyHall(prettifiedCharacterName);
+        setStudyHall(cleanRoom(studyHall, prettifiedCharacterName));
         break;
       case "hall":
         setHall(cleanRoom(hall, prettifiedCharacterName));
         break;
       case "hall-lounge":
-        setHallLounge(prettifiedCharacterName);
+        setHallLounge(cleanRoom(hallLounge, prettifiedCharacterName));
         break;
       case "lounge":
-        setLounge(prettifiedCharacterName);
+        setLounge(cleanRoom(lounge, prettifiedCharacterName));
         break;
       case "study-library":
-        setStudyLibrary(prettifiedCharacterName);
+        setStudyLibrary(cleanRoom(studyLibrary, prettifiedCharacterName));
         break;
       case "hall-billiard":
-        setHallBilliard(prettifiedCharacterName);
+        setHallBilliard(cleanRoom(hallBilliard, prettifiedCharacterName));
         break;
       case "lounge-dining":
-        setLoungeDining(prettifiedCharacterName);
+        setLoungeDining(cleanRoom(loungeDining, prettifiedCharacterName));
         break;
       case "library":
-        setLibrary(prettifiedCharacterName);
+        setLibrary(cleanRoom(library, prettifiedCharacterName));
         break;
       case "library-billiard":
-        setLibraryBilliard(prettifiedCharacterName);
+        setLibraryBilliard(cleanRoom(libraryBilliard, prettifiedCharacterName));
         break;
       case "billiard":
-        setBilliard(prettifiedCharacterName);
+        setBilliard(cleanRoom(billiard, prettifiedCharacterName));
         break;
       case "billiard-dining":
-        setBilliardDining(prettifiedCharacterName);
+        setBilliardDining(cleanRoom(billiardDining, prettifiedCharacterName));
         break;
       case "dining":
-        setDining(prettifiedCharacterName);
+        setDining(cleanRoom(dining, prettifiedCharacterName));
         break;
       case "library-conservatory":
-        setLibraryConservatory(prettifiedCharacterName);
+        setLibraryConservatory(cleanRoom(libraryConservatory, prettifiedCharacterName));
         break;
       case "billiard-ballroom":
-        setBilliardBallroom(prettifiedCharacterName);
+        setBilliardBallroom(cleanRoom(billiardBallroom, prettifiedCharacterName));
         break;
       case "dining-kitchen":
-        setDiningKitchen(prettifiedCharacterName);
+        setDiningKitchen(cleanRoom(diningKitchen, prettifiedCharacterName));
         break;
       case "conservatory":
-        setConservatory(prettifiedCharacterName);
+        setConservatory(cleanRoom(conservatory, prettifiedCharacterName));
         break;
       case "conservatory-ballroom":
-        setConservatoryBallroom(prettifiedCharacterName);
+        setConservatoryBallroom(cleanRoom(conservatoryBallroom, prettifiedCharacterName));
         break;
       case "ballroom":
-        setBallroom(prettifiedCharacterName);
+        setBallroom(cleanRoom(ballroom, prettifiedCharacterName));
         break;
       case "ballroom-kitchen":
-        setBallroomKitchen(prettifiedCharacterName);
+        setBallroomKitchen(cleanRoom(ballroomKitchen, prettifiedCharacterName));
         break;
       case "kitchen":
-        setKitchen(prettifiedCharacterName);
+        setKitchen(cleanRoom(kitchen, prettifiedCharacterName));
         break;
     }
   };

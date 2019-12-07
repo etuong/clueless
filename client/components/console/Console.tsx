@@ -39,6 +39,10 @@ export const Console = props => {
       updateOutputMessage(msg);
     });
 
+    props.socket.on("disapprove", function(msg, a, b, c) {
+      updateOutputMessage(msg);
+    });
+
     props.socket.on("new-player", function(newPlayer) {
       updateOutputMessage(newPlayer);
     });
@@ -116,12 +120,21 @@ export const Console = props => {
     );
     if (response.error === undefined) {
       props.socket.emit(
-        "channel-player-move",
-        suspect +
-          " has been moved to " +
-          room +
-          " by " +
-          Suspect[character]
+        "channel-player-move-only",
+        suspect + " has been moved to " + room + " by " + Suspect[character]
+      );
+      props.socket.emit(
+        "channel-current-player",
+        response.current_player_info.player_name,
+        response.current_character,
+        Suspect[response.current_character]
+      );
+      props.socket.emit(
+        "channel-disapprove",
+        "If applicable, please click on a card to disapprove or click on the empty card to go on the next player",
+        response.current_player_info,
+        response.current_character,
+        response.suggesting_character
       );
     }
   };
@@ -132,10 +145,7 @@ export const Console = props => {
 
   const suspects = () => {
     return Object.keys(Suspect).filter(item => {
-      return (
-        isNaN(Number(item)) &&
-        item !== character /*&& props.playableCharacters.indexOf(item) > -1*/
-      );
+      return isNaN(Number(item));
     });
   };
 

@@ -24,5 +24,8 @@ class Player:
         # Boolean flag for if the player can make a suggestion that turn
         self.allow_suggestion = False
 
+        # Boolean flag to allow player to disapprove
+        self.allow_disapproval = False
+
     def move(self, room_or_hall):
         self.room_hall = room_or_hall

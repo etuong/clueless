@@ -16,7 +16,6 @@ interface AppState {
   character: string;
   isPlaying: boolean;
   currentPlayerHeader: string;
-  playableCharacters: string[];
 }
 
 export default class App extends React.Component<AppProps, AppState> {
@@ -27,8 +26,7 @@ export default class App extends React.Component<AppProps, AppState> {
       player: "",
       character: "",
       isPlaying: false,
-      currentPlayerHeader: "",
-      playableCharacters: []
+      currentPlayerHeader: ""
     };
     this.socket = this.io.connect("http://localhost:3001", { reconnect: true });
   }
@@ -41,16 +39,6 @@ export default class App extends React.Component<AppProps, AppState> {
       console.log(msg);
       this.setPlayerDeck(response);
       this.enableGame();
-
-      /*const players = await ApiClient.get("/players");
-      const list: string[] = [];
-      for (var key of Object.keys(players)) {
-        const player = players[key];
-        if (player !== "current_player") {
-          list.push(player.character_name);
-        }
-      }
-      this.setState({ playableCharacters: { ...list } });*/
     });
 
     this.socket.on("current-player", async msg => {
@@ -103,8 +91,7 @@ export default class App extends React.Component<AppProps, AppState> {
       player,
       character,
       isPlaying,
-      currentPlayerHeader,
-      playableCharacters
+      currentPlayerHeader
     } = this.state;
     if (!isPlaying) {
       return (
@@ -123,13 +110,17 @@ export default class App extends React.Component<AppProps, AppState> {
           <div className={`app ${disable && "disable"}`}>
             <Board socket={this.socket} player={player} character={character} />
             <div className="section">
-              <Cards set={this.playerCards} player={player} />
+              <Cards
+                set={this.playerCards}
+                socket={this.socket}
+                player={player}
+              />
               <div className="section-child">
                 <Console
                   player={player}
                   character={character}
                   socket={this.socket}
-                  playableCharacters={playableCharacters}
+                  io={this.io}
                 />
                 <Notes />
               </div>
