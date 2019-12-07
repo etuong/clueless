@@ -23,9 +23,10 @@ export const Modal = props => {
   };
 
   const handlePlayButton = () => {
-    const character_name = character === "Miss Scarlett" ? "miss_scarlet" : character;
-    const json = { character_name: character_name };
-    ApiClient.put("/player/" + player, json);
+    const character_name =
+      character === "Miss Scarlett" ? "miss_scarlet" : character;
+    const payload = { character_name: character_name };
+    ApiClient.put("/player/" + player, payload);
     props.handleCallback(player, character_name);
     dialog!.close();
   };

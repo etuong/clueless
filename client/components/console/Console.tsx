@@ -4,20 +4,26 @@ import "./Console.scss";
 import { Weapon } from "./Weapon";
 import { Suspect } from "./Suspect";
 import { Room } from "./Room";
+import { ApiClient } from "../../ApiClient";
+import { unprettifyName } from "../../utils/CharacterNameHelper";
 
 export const Console = props => {
   const [player, setPlayer] = useState<string>("");
   const [character, setCharacter] = useState<string>("");
   const [output, setOutput] = useState<string>("");
   const [weapon, setWeapon] = useState<string>("");
-  const [room] = useState<string>(Room.Empty);
+  const [room, setRoom] = useState<string>(Room.empty);
   const [suspect, setSuspect] = useState<string>("");
+  const [readyToSuggestOrAccuse, setReadyToSuggestOrAccuse] = useState<boolean>(
+    false
+  );
 
   let outputMessage = "";
 
   useEffect(() => {
     setPlayer(props.player);
     setCharacter(props.character);
+    getUpdatedPlayer(props.player);
   });
 
   useEffect(() => {
@@ -26,6 +32,10 @@ export const Console = props => {
     });
 
     props.socket.on("start", function(msg) {
+      updateOutputMessage(msg);
+    });
+
+    props.socket.on("player-move", function(msg) {
       updateOutputMessage(msg);
     });
 
@@ -38,9 +48,27 @@ export const Console = props => {
     });
   }, []);
 
+  const getUpdatedPlayer = async playerName => {
+    if (playerName) {
+      const response = await ApiClient.get("/player/" + playerName);
+      const roomHall = response.room_hall;
+      if (Room[roomHall]) {
+        setRoom(Room[roomHall]);
+      }
+      setReadyToSuggestOrAccuse(response.allow_suggestion);
+    }
+  };
+
   const getCurrentTime = () => {
-    return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true }) + " ";
-  }
+    return (
+      new Date().toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        hour12: true
+      }) + " "
+    );
+  };
 
   const updateOutputMessage = (msg: string) => {
     outputMessage = outputMessage.concat(getCurrentTime() + msg) + "\r\n\r\n";
@@ -60,22 +88,56 @@ export const Console = props => {
   const accuse = () => {
     const message =
       suspect + " is the murderer in the " + room + " room using a " + weapon;
-    props.socket.emit("channel-message", player, "Accusation", message);
+    props.socket.emit(
+      "channel-message",
+      player + " (" + character + ")",
+      "Accusation",
+      message
+    );
   };
 
-  const suggest = () => {
+  const suggest = async () => {
     const message =
       suspect + " is the murderer in the " + room + " room using a " + weapon;
-    props.socket.emit("channel-message", player, "Suggestion", message);
+    props.socket.emit(
+      "channel-message",
+      player + " (" + Suspect[character] + ")",
+      "Suggestion",
+      message
+    );
+    const payload = {
+      suggested_character: unprettifyName(suspect),
+      suggested_weapon: weapon,
+      suggested_room: room
+    };
+    const response = await ApiClient.put(
+      "/player/suggestions/" + player,
+      payload
+    );
+    if (response.error === undefined) {
+      props.socket.emit(
+        "channel-player-move",
+        suspect +
+          " has been moved to " +
+          room +
+          " by " +
+          Suspect[character]
+      );
+    }
   };
 
   const weapons = Object.keys(Weapon).filter(item => {
     return isNaN(Number(item));
   });
 
-  const suspects = Object.keys(Suspect).filter(item => {
-    return isNaN(Number(item)) && item !== character;
-  });
+  const suspects = () => {
+    return Object.keys(Suspect).filter(item => {
+      return (
+        isNaN(Number(item)) &&
+        item !== character /*&& props.playableCharacters.indexOf(item) > -1*/
+      );
+    });
+  };
 
   const rooms = Object.keys(Room).filter(item => {
     return isNaN(Number(item));
@@ -93,7 +155,7 @@ export const Console = props => {
         <Select
           placeholder="Select a suspect.."
           styles={customStyle}
-          options={suspects.map(v => ({
+          options={suspects().map(v => ({
             label: Suspect[v],
             value: v
           }))}
@@ -123,11 +185,19 @@ export const Console = props => {
           onChange={handleWeaponChange}
         />
       </div>
-      <div className="announce">
-        <button className="suggest" onClick={suggest}>
+      <div className={"announce " + (!readyToSuggestOrAccuse ? "disable" : "")}>
+        <button
+          className="suggest"
+          onClick={suggest}
+          disabled={!readyToSuggestOrAccuse}
+        >
           Suggest
         </button>
-        <button className="accuse" onClick={accuse}>
+        <button
+          className="accuse"
+          onClick={accuse}
+          disabled={!readyToSuggestOrAccuse}
+        >
           Accuse
         </button>
       </div>

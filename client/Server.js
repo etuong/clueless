@@ -24,6 +24,11 @@ io.on("connection", function(socket) {
     io.emit("update-board", current_character);
   });
 
+  socket.on("channel-player-move", function(tag) {
+    io.emit("player-move", tag);
+    io.emit("update-board", currentCharacter);
+  });
+
   socket.on("channel-new-player", function(player) {
     const response = player + " has joined the game!";
     console.log(response);

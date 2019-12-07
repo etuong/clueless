@@ -21,6 +21,10 @@
   }
 
   .announce {
+    &.disable {
+      opacity: 0.3;
+    }
+
     button {
       margin: 0px 5px;
       color: white;

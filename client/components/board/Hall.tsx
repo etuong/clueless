@@ -1,12 +1,8 @@
 import * as React from "react";
 
 export const Hall = props => {
-  const cellClick = () => {
-    alert("qwer");
-  };
-
   return (
-    <td onClick={props.selected ? cellClick : undefined}>
+    <td onClick={props.selected ? () => props.cellClick(props.tag) : undefined}>
       <div
         className={`${props.horizontal ? "horizontal-hall" : "vertical-hall"}
         ${props.selected ? "path" : ""}`}

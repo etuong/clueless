@@ -14,6 +14,7 @@ import "./Board.scss";
 import { useState, useEffect } from "react";
 import { ApiClient } from "../../ApiClient";
 import { prettifyName } from "../../utils/CharacterNameHelper";
+import { Suspect } from "../console/Suspect";
 
 export const Board = props => {
   "use strict";
@@ -95,14 +96,19 @@ export const Board = props => {
       const response = await ApiClient.get("/players");
 
       for (var key of Object.keys(response)) {
-        const roomHall = response[key].room_hall;
-        const characterName = response[key].character_name;
+        const player = response[key];
+        const roomHall = player.room_hall;
+        const characterName = player.character_name;
         const prettifiedCharacterName = prettifyName(characterName);
 
         setRoomOrHall(roomHall, prettifiedCharacterName);
 
-        if (props.character === currentCharacter && characterName === currentCharacter) {
-          const availableMoves = response[key].available_moves;
+        if (
+          props.character === currentCharacter &&
+          characterName === currentCharacter &&
+          !player.allow_suggestion
+        ) {
+          const availableMoves = player.available_moves;
           for (var counter in availableMoves) {
             setRoomOrHallIsSelected(availableMoves[counter]);
           }
@@ -110,6 +116,23 @@ export const Board = props => {
       }
     });
   });
+
+  const publishNewLocation = async tag => {
+    const payload = { location: tag };
+    const response = await ApiClient.put(
+      "/player/move/" + props.player,
+      payload
+    );
+    if (response.error === undefined) {
+      props.socket.emit(
+        "channel-player-move",
+        props.player + " (" + Suspect[props.character] + ") has moved to " + tag
+      );
+    }
+  };
+
+  const isEmpty = (str: string) => !str || 0 === str.length;
+  const cleanRoom = (room: string, character: string) => isEmpty(room) ? character : room + ", " + character;
 
   const setRoomOrHall = (roomHall, prettifiedCharacterName) => {
     switch (roomHall) {
@@ -120,7 +143,7 @@ export const Board = props => {
         setStudyHall(prettifiedCharacterName);
         break;
       case "hall":
-        setHall(prettifiedCharacterName);
+        setHall(cleanRoom(hall, prettifiedCharacterName));
         break;
       case "hall-lounge":
         setHallLounge(prettifiedCharacterName);
@@ -298,37 +321,65 @@ export const Board = props => {
     <table>
       <tbody>
         <tr>
-          <Room room={STUDY} character={study} selected={isStudySelected} />
+          <Room
+            room={STUDY}
+            character={study}
+            selected={isStudySelected}
+            tag="study"
+            cellClick={publishNewLocation}
+          />
           <Hall
             horizontal={true}
             character={studyHall}
             selected={isStudyHallSelected}
+            tag="study-hall"
+            cellClick={publishNewLocation}
           />
-          <Room room={HALL} character={hall} selected={isHallSelected} />
+          <Room
+            room={HALL}
+            character={hall}
+            selected={isHallSelected}
+            tag="hall"
+            cellClick={publishNewLocation}
+          />
           <Hall
             horizontal={true}
             character={hallLounge}
             selected={isHallLoungeSelected}
+            tag="hall-lounge"
+            cellClick={publishNewLocation}
           />
-          <Room room={LOUNGE} character={lounge} selected={isLoungeSelected} />
+          <Room
+            room={LOUNGE}
+            character={lounge}
+            selected={isLoungeSelected}
+            tag="lounge"
+            cellClick={publishNewLocation}
+          />
         </tr>
         <tr>
           <Hall
             horizontal={false}
             character={studyLibrary}
             selected={isStudyLibrarySelected}
+            tag="study-library"
+            cellClick={publishNewLocation}
           />
           <Empty />
           <Hall
             horizontal={false}
             character={hallBilliard}
             selected={isHallBilliardSelected}
+            tag="hall-billiard"
+            cellClick={publishNewLocation}
           />
           <Empty />
           <Hall
             horizontal={false}
             character={loungeDining}
             selected={isLoungeDiningSelected}
+            tag="lounge-dining"
+            cellClick={publishNewLocation}
           />
         </tr>
         <tr>
@@ -336,41 +387,61 @@ export const Board = props => {
             room={LIBRARY}
             character={library}
             selected={isLibarySelected}
+            tag="library"
+            cellClick={publishNewLocation}
           />
           <Hall
             horizontal={true}
             character={libraryBilliard}
             selected={isLibraryBilliardSelected}
+            tag="library-billiard"
+            cellClick={publishNewLocation}
           />
           <Room
             room={BILLIARD}
             character={billiard}
             selected={isBilliardSelected}
+            tag="billiard"
+            cellClick={publishNewLocation}
           />
           <Hall
             horizontal={true}
             character={billiardDining}
             selected={isBilliardDiningSelected}
+            tag="billiard-dining"
+            cellClick={publishNewLocation}
           />
-          <Room room={DINING} character={dining} selected={isDiningSelected} />
+          <Room
+            room={DINING}
+            character={dining}
+            selected={isDiningSelected}
+            tag="dining"
+            cellClick={publishNewLocation}
+          />
         </tr>
         <tr>
           <Hall
             horizontal={false}
             character={libraryConservatory}
             selected={isLibraryConservatorySelected}
+            tag="library-conservatory"
+            cellClick={publishNewLocation}
           />
           <Empty />
           <Hall
             horizontal={false}
             character={billiardBallroom}
             selected={isBilliardBallroomSelected}
+            tag="billiard-ballroom"
+            cellClick={publishNewLocation}
           />
           <Empty />
           <Hall
             horizontal={false}
             character={diningKitchen}
             selected={isDiningKitchenSelected}
+            tag="dining-kitchen"
+            cellClick={publishNewLocation}
           />
         </tr>
         <tr>
@@ -378,26 +449,36 @@ export const Board = props => {
             room={CONSERVATORY}
             character={conservatory}
             selected={isConservatorySelected}
+            tag="conservatory"
+            cellClick={publishNewLocation}
           />
           <Hall
             horizontal={true}
             character={conservatoryBallroom}
             selected={isConservatoryBallroomSelected}
+            tag="conservatory-ballroom"
+            cellClick={publishNewLocation}
           />
           <Room
             room={BATHROOM}
             character={ballroom}
             selected={isBallroomSelected}
+            tag="ballroom"
+            cellClick={publishNewLocation}
           />
           <Hall
             horizontal={true}
             character={ballroomKitchen}
             selected={isBallroomKitchenSelected}
+            tag="ballroom-kitchen"
+            cellClick={publishNewLocation}
           />
           <Room
             room={KITCHEN}
             character={kitchen}
             selected={isKitchenSelected}
+            tag="kitchen"
+            cellClick={publishNewLocation}
           />
         </tr>
       </tbody>

@@ -55,42 +55,25 @@ class PlayerMoveApi(Resource):
             return jsonify(error="Player moves are not allowed right now")
 
         player = game.players.get(player_name)
-        current_location = player.room_hall
         new_location = args.get('location')
 
-        move_accepted = False
+        if new_location in game.hallways.keys():
+            game.hallways[new_location] = True
+            player.available_moves = new_location.split('-')
+            game.current_player = game.players.get(game.current_player).next_player
 
-        if new_location in player.available_moves:
-            if game.hallways.get(new_location):
-                player.move(new_location)
-                move_accepted = True
-            elif new_location in game.rooms.keys():
-                player.move(new_location)
-                move_accepted = True
-            else:
-                move_accepted = False
-        else:
-            move_accepted = False
-
-        if move_accepted:
-            if new_location in game.hallways.keys():
-                game.hallways[new_location] = True
-                player.available_moves = new_location.split('-')
+            if game.players.get(game.current_player).made_accusation:
                 game.current_player = game.players.get(game.current_player).next_player
-
-                if game.players.get(game.current_player).made_accusation:
-                    game.current_player = game.players.get(game.current_player).next_player
-            else:
-                player.available_moves = game.rooms.get(new_location).hallways
-                player.allow_suggestion = True
-                secret_passage = game.rooms.get(new_location).secret_passage_connection
-                if secret_passage:
-                    player.available_moves.append(secret_passage)
-                game.player_moved = True
-
-            return jsonify(location=new_location, current_player=game.current_player)
         else:
-            return jsonify(error="Unacceptable Location Selected")
+            player.available_moves = game.rooms.get(new_location).hallways
+            player.allow_suggestion = True
+            secret_passage = game.rooms.get(new_location).secret_passage_connection
+            if secret_passage:
+                player.available_moves.append(secret_passage)
+            player.move(new_location)
+            game.player_moved = True
+
+        return jsonify(location=new_location, current_player=game.current_player)
 
 
 class AccusationsApi(Resource):
@@ -130,10 +113,15 @@ class SuggestionsApi(Resource):
         parser.add_argument('suggested_room')
         args = parser.parse_args()
 
+        suggested_character = args.suggested_character.lower()
+        suggested_weapon = args.suggested_weapon.lower()
+        suggested_room = args.suggested_room.lower()
+
         if game.current_player != player_name:
             return jsonify(error="It is not your turn to make a suggestion")
-
-        if game.players.get(player_name).room_hall != args.suggested_room:
+        print(game.players.get(player_name).room_hall)
+        print(suggested_room)
+        if game.players.get(player_name).room_hall != suggested_room:
             return jsonify(error="You must be in the room of your suggestion")
 
         if game.suggesting_player is not None:
@@ -143,11 +131,11 @@ class SuggestionsApi(Resource):
             return jsonify(error="You cannot make a suggestion right now")
 
         for player in game.players.values():
-            if player.character_name == args.suggested_character and player.player_name != player_name:
-                player.move(args.suggested_room)
+            if player.character_name == suggested_character and player.player_name != player_name:
+                player.move(suggested_room)
                 player.allow_suggestion = True
 
-        guessed_answer = (args.suggested_character, args.suggested_room, args.suggested_weapon)
+        guessed_answer = (suggested_character, suggested_room, suggested_weapon)
 
         game.suggesting_player = game.current_player
 
