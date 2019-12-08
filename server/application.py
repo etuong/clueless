@@ -185,8 +185,8 @@ class DisproveSuggestionApi(Resource):
 class StartApi(Resource):
     def post(self):
         # When game begins playing, distribute cards to the players
-        game.distribute_cards()
         game.set_player_order()
+        game.distribute_cards()
 
         response = dict()
 
@@ -200,6 +200,11 @@ class StartApi(Resource):
         # Return game state
         return {'isPlaying': game.game_started}
 
+class ResetGameApi(Resource):
+    def put(self):
+        game.reset()
+        return jsonify(reset=True)
+
 api.add_resource(PlayerApi, '/api/player/<player_name>')
 api.add_resource(PlayersApi, '/api/players')
 api.add_resource(PlayerMoveApi, '/api/player/move/<player_name>')
@@ -207,6 +212,7 @@ api.add_resource(AccusationsApi, '/api/player/accusation/<player_name>')
 api.add_resource(SuggestionsApi, '/api/player/suggestions/<player_name>')
 api.add_resource(StartApi, '/api/start')
 api.add_resource(DisproveSuggestionApi, '/api/player/disprove')
+api.add_resource(ResetGameApi, '/api/reset')
 
 if __name__ == "__main__":
     application.debug = True

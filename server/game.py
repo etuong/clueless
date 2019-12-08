@@ -119,25 +119,20 @@ class CluelessGame:
     # Algorithm to distribute random cards to the players
     def distribute_cards(self):
         # Get all the cards
-        cards = ROOMS + WEAPONS + CHARACTERS
-        current_player_index = 0
+        cards = ROOMS.copy() + WEAPONS.copy() + CHARACTERS.copy()
         
         while len(cards) != 0:
-            if current_player_index > (len(self.players) - 1):
-                current_player_index = 0
-
-            # Get the current player
-            current_player = [*self.players.keys()][current_player_index]
-
             # Get a random card and remove from deck
             random_card = random.choice(cards)
             cards.remove(random_card)
 
             # Append new card to player hand
-            self.players.get(current_player).cards.append(random_card)
+            self.players.get(self.current_player).cards.append(random_card)
 
             # Move on to the next player
-            current_player_index += 1
+            self.current_player = self.players.get(self.current_player).next_player
+
+        self.current_player = [*self.players.keys()][0]
         self.game_started = True
 
     # Loop through the player list and set the play order
@@ -152,3 +147,22 @@ class CluelessGame:
         self.current_player = [*self.players.keys()][0]
         
         return
+
+    #Called to reset all cards and player positions for a new game
+    def reset(self):
+        CHARACTERS.append(self.game_answer[0])
+        ROOMS.append(self.game_answer[1])
+        WEAPONS.append(self.game_answer[2])
+
+        self.game_answer = self.create_game_answer()
+
+        for player in self.players.values():
+            player.room_hall = INITIAL_PLAYER_LOCATIONS.get(player.character_name)
+            player.available_moves =  player.room_hall.split('-')
+            player.made_accusation = False
+            player.allow_suggestion = False
+            player.allow_disapproval = False
+            player.cards = list()
+
+        self.distribute_cards()
+        return 
