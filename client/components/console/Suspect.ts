@@ -1,5 +1,5 @@
 export enum Suspect {
-    miss_scarlet = "Miss Scarlett",
+    miss_scarlet = "Miss Scarlet",
     mr_green =  "Mr. Green",
     colonel_mustard =   "Colonel Mustard",
     professor_plum =  "Professor Plum",

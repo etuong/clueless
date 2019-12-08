@@ -92,7 +92,7 @@ export const Board = props => {
 
   useEffect(() => {
     props.socket.on("update-board", async function(currentCharacter) {
-      resetBoard();
+      await resetBoard();
       const response = await ApiClient.get("/players");
 
       for (var key of Object.keys(response)) {
@@ -116,7 +116,7 @@ export const Board = props => {
         }
       }
     });
-  });
+  }, [props.character]);
 
   const publishNewLocation = async tag => {
     const payload = { location: tag };
@@ -133,72 +133,72 @@ export const Board = props => {
   };
 
   const isEmpty = (str: string) => !str || 0 === str.length;
-  const cleanRoom = (room: string, character: string) => isEmpty(room) ? character : room + ", " + character;
+  const cleanRoom = (room: string, character: string) => isEmpty(room) ? character : room.includes(character) ? room : room + ", " + character;
 
   const setRoomOrHall = (roomHall, prettifiedCharacterName) => {
     switch (roomHall) {
       case "study":
-        setStudy(cleanRoom(study, prettifiedCharacterName));
+        setStudy(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "study-hall":
-        setStudyHall(cleanRoom(studyHall, prettifiedCharacterName));
+        setStudyHall(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "hall":
-        setHall(cleanRoom(hall, prettifiedCharacterName));
+        setHall(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "hall-lounge":
-        setHallLounge(cleanRoom(hallLounge, prettifiedCharacterName));
+        setHallLounge(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "lounge":
-        setLounge(cleanRoom(lounge, prettifiedCharacterName));
+        setLounge(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "study-library":
-        setStudyLibrary(cleanRoom(studyLibrary, prettifiedCharacterName));
+        setStudyLibrary(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "hall-billiard":
-        setHallBilliard(cleanRoom(hallBilliard, prettifiedCharacterName));
+        setHallBilliard(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "lounge-dining":
-        setLoungeDining(cleanRoom(loungeDining, prettifiedCharacterName));
+        setLoungeDining(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "library":
-        setLibrary(cleanRoom(library, prettifiedCharacterName));
+        setLibrary(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "library-billiard":
-        setLibraryBilliard(cleanRoom(libraryBilliard, prettifiedCharacterName));
+        setLibraryBilliard(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "billiard":
-        setBilliard(cleanRoom(billiard, prettifiedCharacterName));
+        setBilliard(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "billiard-dining":
-        setBilliardDining(cleanRoom(billiardDining, prettifiedCharacterName));
+        setBilliardDining(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "dining":
-        setDining(cleanRoom(dining, prettifiedCharacterName));
+        setDining(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "library-conservatory":
-        setLibraryConservatory(cleanRoom(libraryConservatory, prettifiedCharacterName));
+        setLibraryConservatory(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "billiard-ballroom":
-        setBilliardBallroom(cleanRoom(billiardBallroom, prettifiedCharacterName));
+        setBilliardBallroom(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "dining-kitchen":
-        setDiningKitchen(cleanRoom(diningKitchen, prettifiedCharacterName));
+        setDiningKitchen(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "conservatory":
-        setConservatory(cleanRoom(conservatory, prettifiedCharacterName));
+        setConservatory(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "conservatory-ballroom":
-        setConservatoryBallroom(cleanRoom(conservatoryBallroom, prettifiedCharacterName));
+        setConservatoryBallroom(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "ballroom":
-        setBallroom(cleanRoom(ballroom, prettifiedCharacterName));
+        setBallroom(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "ballroom-kitchen":
-        setBallroomKitchen(cleanRoom(ballroomKitchen, prettifiedCharacterName));
+        setBallroomKitchen(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "kitchen":
-        setKitchen(cleanRoom(kitchen, prettifiedCharacterName));
+        setKitchen(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
     }
   };
@@ -271,7 +271,7 @@ export const Board = props => {
     }
   };
 
-  const resetBoard = () => {
+  const resetBoard = async () => {
     const EMPTY = "";
     setStudy(EMPTY);
     setStudyHall(EMPTY);

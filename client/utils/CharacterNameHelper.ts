@@ -10,10 +10,10 @@ export const unprettifyName = name => {
     case "Miss Scarlet":
       unprettifiedName = "miss_scarlet";
       break;
-    case "Prof Plum":
+    case "Professor Plum":
       unprettifiedName = "professor_plum";
       break;
-    case "Col Mustard":
+    case "Colonel Mustard":
       unprettifiedName = "colonel_mustard";
       break;
     case "Mrs. Peacock":

@@ -9,7 +9,7 @@ export const Cards = props => {
     props.socket.on("disapprove", function(msg, a, b, c) {
       setDisapprove(a.player_name === props.player ? a.allow_disapproval : false)
     });
-  });
+  }, [props.player ]);
 
   const shuffleArray = array => {
     let i = array.length - 1;
