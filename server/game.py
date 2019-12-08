@@ -31,7 +31,7 @@ INITIAL_PLAYER_LOCATIONS = {
 
 ROOMS = [
     'study',
-    'library',
+    'hall',
     'billiard',
     'lounge',
     'dining',

@@ -7,9 +7,11 @@ export const Cards = props => {
 
   useEffect(() => {
     props.socket.on("disapprove", function(msg, a, b, c) {
-      setDisapprove(a.player_name === props.player ? a.allow_disapproval : false)
+      setDisapprove(
+        a.player_name === props.player ? a.allow_disapproval : false
+      );
     });
-  }, [props.player ]);
+  }, [props.player]);
 
   const shuffleArray = array => {
     let i = array.length - 1;
@@ -33,6 +35,7 @@ export const Cards = props => {
             key={idx}
             src={card}
             className={`${disapprove && "disapprove"}`}
+            onClick={disapprove ? () => props.cardClick(card) : undefined}
           />
         );
       })}

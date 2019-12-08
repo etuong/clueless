@@ -51,7 +51,7 @@ export default class App extends React.Component<AppProps, AppState> {
   private socket;
   private io = require("socket.io-client");
 
-  playerCards = new Array();
+  playerCards = new Map();
 
   enableGame = () => this.setState({ disable: false });
 
@@ -79,9 +79,13 @@ export default class App extends React.Component<AppProps, AppState> {
     );
   };
 
+  handleDisapproval = async card => {
+    alert(this.playerCards.get(card));
+  };
+
   setPlayerDeck = response => {
     response.cards.map((c: string) =>
-      this.playerCards.push(require("./assets/" + c + ".jpg"))
+      this.playerCards.set(require("./assets/" + c + ".jpg"), c)
     );
   };
 
@@ -111,9 +115,10 @@ export default class App extends React.Component<AppProps, AppState> {
             <Board socket={this.socket} player={player} character={character} />
             <div className="section">
               <Cards
-                set={this.playerCards}
+                set={Array.from(this.playerCards.keys())}
                 socket={this.socket}
                 player={player}
+                cardClick={this.handleDisapproval}
               />
               <div className="section-child">
                 <Console
