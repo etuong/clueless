@@ -126,14 +126,25 @@ export const Board = props => {
     );
     if (response.error === undefined) {
       props.socket.emit(
-        "channel-player-move",
+        "channel-player-move-only",
         props.player + " (" + Suspect[props.character] + ") has moved to " + tag
+      );
+      props.socket.emit(
+        "channel-current-player",
+        response.current_player_info.player_name,
+        response.current_player_info.character_name,
+        Suspect[response.current_player_info.character_name]
       );
     }
   };
 
   const isEmpty = (str: string) => !str || 0 === str.length;
-  const cleanRoom = (room: string, character: string) => isEmpty(room) ? character : room.includes(character) ? room : room + ", " + character;
+  const cleanRoom = (room: string, character: string) =>
+    isEmpty(room)
+      ? character
+      : room.includes(character)
+      ? room
+      : room + ", " + character;
 
   const setRoomOrHall = (roomHall, prettifiedCharacterName) => {
     switch (roomHall) {
@@ -177,7 +188,9 @@ export const Board = props => {
         setDining(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "library-conservatory":
-        setLibraryConservatory(prev => cleanRoom(prev, prettifiedCharacterName));
+        setLibraryConservatory(prev =>
+          cleanRoom(prev, prettifiedCharacterName)
+        );
         break;
       case "billiard-ballroom":
         setBilliardBallroom(prev => cleanRoom(prev, prettifiedCharacterName));
@@ -189,7 +202,9 @@ export const Board = props => {
         setConservatory(prev => cleanRoom(prev, prettifiedCharacterName));
         break;
       case "conservatory-ballroom":
-        setConservatoryBallroom(prev => cleanRoom(prev, prettifiedCharacterName));
+        setConservatoryBallroom(prev =>
+          cleanRoom(prev, prettifiedCharacterName)
+        );
         break;
       case "ballroom":
         setBallroom(prev => cleanRoom(prev, prettifiedCharacterName));

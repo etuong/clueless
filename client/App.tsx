@@ -85,7 +85,7 @@ export default class App extends React.Component<AppProps, AppState> {
     };
     const response = await ApiClient.put("/player/disprove", payload);
     const current_player = response["current_player"];
-    const current_character = response[current_player].character_name;
+    const current_character = response["current_character"];
     this.socket.emit(
       "channel-current-player",
       current_player,
