@@ -106,10 +106,9 @@ class CluelessGame:
 
     # Create a new player and assign an initial starting position on the board
     def create_player(self, player_name, character_name):
-        new_player = Player(player_name, character_name, 
-                                            INITIAL_PLAYER_LOCATIONS.get(character_name))
+        new_player = Player(player_name, character_name, None)
 
-        new_player.available_moves =  new_player.room_hall.split('-')
+        new_player.available_moves.append(INITIAL_PLAYER_LOCATIONS.get(character_name))
 
         self.players[player_name] = new_player
 
