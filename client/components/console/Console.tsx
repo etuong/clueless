@@ -39,7 +39,7 @@ export const Console = props => {
       updateOutputMessage(msg);
     });
 
-    props.socket.on("disapprove", function(msg, a, b, c) {
+    props.socket.on("disapprove", function(msg, a) {
       updateOutputMessage(msg);
     });
 
@@ -126,15 +126,13 @@ export const Console = props => {
       props.socket.emit(
         "channel-current-player",
         response.current_player_info.player_name,
-        response.current_character,
-        Suspect[response.current_character]
+        response.current_player_info.character_name,
+        Suspect[response.current_player_info.character_name]
       );
       props.socket.emit(
         "channel-disapprove",
         response.current_player_info.player_name + ", if applicable, please click on a card to disapprove or click on the empty card to go on the next player",
-        response.current_player_info,
-        response.current_character,
-        response.suggesting_character
+        response.current_player_info
       );
     }
   };

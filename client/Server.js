@@ -33,8 +33,8 @@ io.on("connection", function(socket) {
     io.emit("player-move", tag);
   });
 
-  socket.on("channel-disapprove", function(msg, a, b, c) {
-    io.emit("disapprove", msg, a, b, c);
+  socket.on("channel-disapprove", function(msg, a) {
+    io.emit("disapprove", msg, a);
   });
 
   socket.on("channel-new-player", function(player) {

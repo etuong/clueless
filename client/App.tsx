@@ -80,7 +80,11 @@ export default class App extends React.Component<AppProps, AppState> {
   };
 
   handleDisapproval = async card => {
-    alert(this.playerCards.get(card));
+    const payload = {
+      card: this.playerCards.get(card)
+    };
+    const response = await ApiClient.put("/player/disprove/", payload);
+    this.socket.emit("channel-current-player", response.current_player);
   };
 
   setPlayerDeck = response => {
@@ -135,9 +139,13 @@ export default class App extends React.Component<AppProps, AppState> {
       );
     } else {
       return (
+        <>
         <p className="already-playing">
-          THE GAME IS ALREADY PLAYING! PLEASE WAIT FOR THE NEXT GAME.
+          THE GAME IS ALREADY PLAYING! PLEASE WAIT FOR THE NEXT GAME. <br/>
+          To reset the game, please click on the following button.
         </p>
+        <button onClick={async () =>{await ApiClient.post("/player/reset")}}>RESET</button>
+        </>
       );
     }
   }

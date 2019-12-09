@@ -4,6 +4,12 @@ from flask_cors import CORS
 import game
 import os
 
+# Action	HTTP Verb   Description
+# Create	POST	    Create a new, unique thing
+# Read	    GET	        Read the information about a thing or collection of things
+# Update	PUT	        Update the information about an existing thing
+# Delete	DELETE	    Delete a thing
+
 # EB looks for an 'application' callable by default.
 application = Flask(__name__, static_url_path = "")
 api = Api(application)
@@ -154,7 +160,7 @@ class SuggestionsApi(Resource):
         game.current_player = game.players.get(game.current_player).next_player        
         game.players.get(game.current_player).allow_disapproval = True
 
-        return jsonify(current_player_info=vars(game.players.get(game.current_player)), current_character=game.players.get(game.current_player).character_name, suggesting_player=game.suggesting_player)
+        return jsonify(current_player_info=vars(game.players.get(game.current_player)))
 
 
 class DisproveSuggestionApi(Resource):
@@ -201,7 +207,8 @@ class StartApi(Resource):
         return {'isPlaying': game.game_started}
 
 class ResetGameApi(Resource):
-    def put(self):
+    def post(self):
+        print("asdf")
         game.reset()
         return jsonify(reset=True)
 
