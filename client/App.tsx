@@ -83,9 +83,16 @@ export default class App extends React.Component<AppProps, AppState> {
     const payload = {
       card: this.playerCards.get(card)
     };
-    const response = await ApiClient.put("/player/disprove/", payload);
+    const response = await ApiClient.put("/player/disprove", payload);
     this.socket.emit("channel-current-player", response.current_player);
   };
+
+  handleReset = async () =>{
+    const response = await ApiClient.post("/reset")
+    if (response.reset) {
+      this.setState({isPlaying: false});
+    }
+  }
 
   setPlayerDeck = response => {
     response.cards.map((c: string) =>
@@ -144,7 +151,7 @@ export default class App extends React.Component<AppProps, AppState> {
           THE GAME IS ALREADY PLAYING! PLEASE WAIT FOR THE NEXT GAME. <br/>
           To reset the game, please click on the following button.
         </p>
-        <button onClick={async () =>{await ApiClient.post("/player/reset")}}>RESET</button>
+        <button onClick={this.handleReset}>RESET</button>
         </>
       );
     }

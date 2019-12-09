@@ -148,21 +148,17 @@ class CluelessGame:
         
         return
 
-    #Called to reset all cards and player positions for a new game
+    # Call to reset for a new game
     def reset(self):
         CHARACTERS.append(self.game_answer[0])
         ROOMS.append(self.game_answer[1])
         WEAPONS.append(self.game_answer[2])
 
+        self.players = OrderedDict()
         self.game_answer = self.create_game_answer()
+        self.current_player = None
+        self.suggesting_player = None
+        self.game_started = False
+        self.player_moved = False
 
-        for player in self.players.values():
-            player.room_hall = INITIAL_PLAYER_LOCATIONS.get(player.character_name)
-            player.available_moves =  player.room_hall.split('-')
-            player.made_accusation = False
-            player.allow_suggestion = False
-            player.allow_disapproval = False
-            player.cards = list()
-
-        self.distribute_cards()
         return 

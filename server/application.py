@@ -208,7 +208,6 @@ class StartApi(Resource):
 
 class ResetGameApi(Resource):
     def post(self):
-        print("asdf")
         game.reset()
         return jsonify(reset=True)
 
