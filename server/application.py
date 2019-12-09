@@ -172,7 +172,7 @@ class DisproveSuggestionApi(Resource):
         current_player = game.players.get(game.current_player)
 
         # If player does not have the cards to disapprove, then proceed to the next player
-        if args.card is None:
+        if args.card is "empty":
             game.current_player = current_player.next_player
         else:
             game.current_player = game.players.get(game.suggesting_player).next_player

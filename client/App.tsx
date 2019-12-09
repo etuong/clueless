@@ -98,6 +98,7 @@ export default class App extends React.Component<AppProps, AppState> {
     response.cards.map((c: string) =>
       this.playerCards.set(require("./assets/" + c + ".jpg"), c)
     );
+    this.playerCards.set(require("./assets/empty.jpg"), "empty")
   };
 
   render() {
