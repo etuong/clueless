@@ -20,4 +20,4 @@ class Room:
         if self.secret_passage_connection:
             move_options.append(self.secret_passage_connection)
 
-        return dict(options=move_options)
+        return move_options

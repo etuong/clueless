@@ -84,7 +84,14 @@ export default class App extends React.Component<AppProps, AppState> {
       card: this.playerCards.get(card)
     };
     const response = await ApiClient.put("/player/disprove", payload);
-    this.socket.emit("channel-current-player", response.current_player);
+    const current_player = response["current_player"];
+    const current_character = response[current_player].character_name;
+    this.socket.emit(
+      "channel-current-player",
+      current_player,
+      current_character,
+      Suspect[current_character]
+    );
   };
 
   handleReset = async () =>{

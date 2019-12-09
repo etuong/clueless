@@ -39,6 +39,7 @@ class PlayersApi(Resource):
         response = dict()
         for name, player in game.players.items():
             response[name] = vars(player)
+        response['current_player'] = game.current_player
         return response
 
 
@@ -146,7 +147,13 @@ class SuggestionsApi(Resource):
 
         for player in game.players.values():
             if player.character_name == suggested_character and player.player_name != player_name:
-                player.move(suggested_room)                
+                player.move(suggested_room)
+                player.available_moves = game.rooms.get(suggested_room).get_move_options()
+
+                if not player.made_accusation:
+                    player.allow_suggestion = True
+            if player.player_name != player_name:
+                player.allow_disapproval = True               
 
         guessed_answer = (suggested_character, suggested_room, suggested_weapon)
 
@@ -157,8 +164,7 @@ class SuggestionsApi(Resource):
         game.players.get(game.current_player).allow_suggestion = False
         
         # Get the next player and allow him to disapprove
-        game.current_player = game.players.get(game.current_player).next_player        
-        game.players.get(game.current_player).allow_disapproval = True
+        game.current_player = game.players.get(game.current_player).next_player  
 
         return jsonify(current_player_info=vars(game.players.get(game.current_player)))
 
@@ -172,7 +178,8 @@ class DisproveSuggestionApi(Resource):
         current_player = game.players.get(game.current_player)
 
         # If player does not have the cards to disapprove, then proceed to the next player
-        if args.card is "empty":
+        if args.card == "empty":
+            current_player.allow_disapproval = False
             game.current_player = current_player.next_player
         else:
             game.current_player = game.players.get(game.suggesting_player).next_player
@@ -181,11 +188,18 @@ class DisproveSuggestionApi(Resource):
                 game.current_player = current_player.next_player
                 
             game.suggesting_player = None
-            game.allow_disapproval = False
             game.player_moved = False
 
+            for player in game.players.values():
+                player.allow_disapproval = False
 
-        return jsonify(current_player = game.current_player)
+        response = dict()
+
+        for name, player in game.players.items():
+            response[name] = vars(player)
+
+        response['current_player'] = game.current_player
+        return response
 
 
 class StartApi(Resource):
