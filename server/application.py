@@ -85,11 +85,11 @@ class PlayerMoveApi(Resource):
 
             # Allow the player to make suggestions
             player.allow_suggestion = True
-            game.player_moved = True
 
         player.move(new_location)
+        game.player_moved = True
 
-        return jsonify(location=new_location, current_player_info=vars(game.players.get(game.current_player)))
+        return jsonify(location=new_location, current_player=game.current_player)
 
 
 class AccusationsApi(Resource):
@@ -150,8 +150,8 @@ class SuggestionsApi(Resource):
                 player.move(suggested_room)
                 player.available_moves = game.rooms.get(suggested_room).get_move_options()
 
-                #if not player.made_accusation:
-                 #   player.allow_suggestion = True
+                if not player.made_accusation:
+                    player.allow_suggestion = True
             if player.player_name != player_name:
                 player.allow_disapproval = True               
 
@@ -175,30 +175,31 @@ class DisproveSuggestionApi(Resource):
         parser.add_argument('card')
         args = parser.parse_args()
 
-        # current_player here is an object, not a string
         current_player = game.players.get(game.current_player)
-        current_player.allow_disapproval = False
 
         # If player does not have the cards to disapprove, then proceed to the next player
-        if args.card == "empty":            
+        if args.card == "empty":
+            current_player.allow_disapproval = False
             game.current_player = current_player.next_player
         else:
-            game.current_player = game.players.get(game.current_player).next_player
+            game.current_player = game.players.get(game.suggesting_player).next_player
 
             if current_player.made_accusation:
                 game.current_player = current_player.next_player
-            # FIX FIX FIX
-            if (game.current_player == game.suggesting_player):
-                game.suggesting_player = None
-                game.player_moved = False
-                # Let's clean this up
-                game.current_player = current_player.next_player
-                current_player = game.players.get(game.current_player)
-                while current_player.made_accusation:
-                    game.current_player = current_player.next_player
-                    current_player = game.players.get(game.current_player)
+                
+            game.suggesting_player = None
+            game.player_moved = False
 
-        return jsonify(current_player = game.current_player, current_character = game.players.get(game.current_player).character_name)
+            for player in game.players.values():
+                player.allow_disapproval = False
+
+        response = dict()
+
+        for name, player in game.players.items():
+            response[name] = vars(player)
+
+        response['current_player'] = game.current_player
+        return response
 
 
 class StartApi(Resource):
