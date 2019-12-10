@@ -174,7 +174,6 @@ export const Console = props => {
         <label>Rooms:</label>
         <Select
           placeholder={room}
-          isDisabled={true}
           styles={customStyle}
           options={rooms.map(v => ({
             label: Room[v]

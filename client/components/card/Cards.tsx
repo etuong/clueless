@@ -6,11 +6,13 @@ export const Cards = props => {
   const [disapprove, setDisapprove] = useState<boolean>(false);
 
   useEffect(() => {
-    props.socket.on("disapprove", function(msg, a) {
-      setDisapprove(
-        a.player_name === props.player ? a.allow_disapproval : false
-      );
-    });
+    if (props.player !== "") {
+      props.socket.on("disapprove", function(msg, a) {
+        setDisapprove(
+          a.player_name === props.player ? a.allow_disapproval : false
+        );
+      });
+    }
   }, [props.player]);
 
   return (

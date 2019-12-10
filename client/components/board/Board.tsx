@@ -91,31 +91,32 @@ export const Board = props => {
   const [isKitchenSelected, setIsKitchenSelected] = useState<boolean>(false);
 
   useEffect(() => {
-    props.socket.on("update-board", async function(currentCharacter) {
-      await resetBoard();
-      const response = await ApiClient.get("/players");
+    if (props.character !== "") {
+      props.socket.on("update-board", async function(currentCharacter) {
+        await resetBoard();
+        const response = await ApiClient.get("/players");
 
-      for (var key of Object.keys(response)) {
-        const player = response[key];
-        const roomHall = player.room_hall;
-        const characterName = player.character_name;
-        const prettifiedCharacterName = prettifyName(characterName);
+        for (var key of Object.keys(response)) {
+          const player = response[key];
+          const roomHall = player.room_hall;
+          const characterName = player.character_name;
+          const prettifiedCharacterName = prettifyName(characterName);
 
-        setRoomOrHall(roomHall, prettifiedCharacterName);
+          setRoomOrHall(roomHall, prettifiedCharacterName);
 
-        if (
-          props.character === currentCharacter &&
-          characterName === currentCharacter &&
-          !player.allow_suggestion &&
-          !player.allow_disapproval
-        ) {
-          const availableMoves = player.available_moves;
-          for (var counter in availableMoves) {
-            setRoomOrHallIsSelected(availableMoves[counter]);
+          if (
+            props.character === currentCharacter &&
+            characterName === currentCharacter &&
+            !player.allow_disapproval
+          ) {
+            const availableMoves = player.available_moves;
+            for (var counter in availableMoves) {
+              setRoomOrHallIsSelected(availableMoves[counter]);
+            }
           }
         }
-      }
-    });
+      });
+    }
   }, [props.character]);
 
   const publishNewLocation = async tag => {
