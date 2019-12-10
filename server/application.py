@@ -141,7 +141,7 @@ class AccusationsApi(Resource):
         else:
             game.current_player = game.players.get(game.current_player).next_player
 
-            return jsonify(guess=False, current_player=game.current_player)
+            return jsonify(guess=False, current_player_info=vars(game.players.get(game.current_player)))
 
 
 class SuggestionsApi(Resource):

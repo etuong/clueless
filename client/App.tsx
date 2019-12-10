@@ -79,36 +79,43 @@ export default class App extends React.Component<AppProps, AppState> {
     );
   };
 
-  handleDisapproval = async card => {
+  handleDisapproval = async (card, suggestedPlayer) => {
     const payload = {
       card: this.playerCards.get(card)
     };
     const response = await ApiClient.put("/player/disprove", payload);
     this.socket.emit(
-      "channel-current-player",
-      response.current_player_info.player_name ,
-      response.current_player_info.character_name ,
-      Suspect[response.current_player_info.character_name]
+      "channel-client-to-client",
+      suggestedPlayer + " picks the " + this.playerCards.get(card) + " card"
     );
     this.socket.emit(
-      "channel-disapprove",
-      response.current_player_info.player_name + ", if applicable, please click on a card to disapprove or click on the empty card to go on the next player",
-      response.current_player_info
+      "channel-current-player",
+      response.current_player_info.player_name,
+      response.current_player_info.character_name,
+      Suspect[response.current_player_info.character_name]
     );
+    if (this.playerCards.get(card) === "empty") {
+      this.socket.emit(
+        "channel-disapprove",
+        response.current_player_info.player_name +
+          ", if applicable, please click on a card to disapprove or click on the empty card to go on the next player",
+        response.current_player_info
+      );
+    }
   };
 
-  handleReset = async () =>{
-    const response = await ApiClient.post("/reset")
+  handleReset = async () => {
+    const response = await ApiClient.post("/reset");
     if (response.reset) {
-      this.setState({isPlaying: false});
+      this.setState({ isPlaying: false });
     }
-  }
+  };
 
   setPlayerDeck = response => {
     response.cards.map((c: string) =>
       this.playerCards.set(require("./assets/" + c + ".jpg"), c)
     );
-    this.playerCards.set(require("./assets/empty.jpg"), "empty")
+    this.playerCards.set(require("./assets/empty.jpg"), "empty");
   };
 
   render() {
@@ -158,11 +165,11 @@ export default class App extends React.Component<AppProps, AppState> {
     } else {
       return (
         <>
-        <p className="already-playing">
-          THE GAME IS ALREADY PLAYING! PLEASE WAIT FOR THE NEXT GAME. <br/>
-          To reset the game, please click on the following button.
-        </p>
-        <button onClick={this.handleReset}>RESET</button>
+          <p className="already-playing">
+            THE GAME IS ALREADY PLAYING! PLEASE WAIT FOR THE NEXT GAME. <br />
+            To reset the game, please click on the following button.
+          </p>
+          <button onClick={this.handleReset}>RESET</button>
         </>
       );
     }

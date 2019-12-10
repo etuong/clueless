@@ -25,7 +25,7 @@ export const Cards = props => {
             key={idx}
             src={card}
             className={`${disapprove && "disapprove"}`}
-            onClick={disapprove ? () => props.cardClick(card) : undefined}
+            onClick={disapprove ? () => props.cardClick(card, props.player) : undefined}
           />
         );
       })}

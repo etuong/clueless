@@ -2,16 +2,28 @@ var app = require("express")();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
 var currentCharacter = "";
+var suggestingCharacter = "";
 
 io.on("connection", function(socket) {
   console.log("User connected");
+
+  socket.on("channel-client-to-client", function(msg) {
+    io.emit("client-to-client", suggestingCharacter, msg);
+  });
 
   socket.on("channel-whatever", function(msg) {
     io.emit("whatever", msg);
   });
 
-  socket.on("channel-message", function(from, action, msg) {
-    const sentence = from + "'s " + action + ": " + msg;
+  socket.on("channel-suggestion", function(player, from, msg) {
+    suggestingCharacter = player;
+    const sentence = from + "'s suggsetion: " + msg;
+    console.log(sentence);
+    io.emit("message", sentence);
+  });
+
+  socket.on("channel-accusation", function(from, msg) {
+    const sentence = from + "'s accusation: " + msg;
     console.log(sentence);
     io.emit("message", sentence);
   });

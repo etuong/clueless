@@ -27,34 +27,41 @@ export const Console = props => {
   });
 
   useEffect(() => {
-    props.socket.on("message", function(msg) {
-      updateOutputMessage(msg);
-    });
-
-    props.socket.on("start", function(msg) {
-      updateOutputMessage(msg);
-    });
-
-    props.socket.on("player-move", function(msg) {
-      updateOutputMessage(msg);
-    });
-
-    props.socket.on("disapprove", function(msg, a) {
-      updateOutputMessage(msg);
-    });
-
-    props.socket.on("whatever", function(msg, a) {
-      updateOutputMessage(msg);
-    });
-
-    props.socket.on("new-player", function(newPlayer) {
-      updateOutputMessage(newPlayer);
-    });
-
-    props.socket.on("current-player", async tag => {
-      updateOutputMessage("It's " + tag + " turn!");
-    });
-  }, []);
+    if (player !== "") {
+      props.socket.on("client-to-client", function(toPlayer, msg) {
+        if (toPlayer === player) {
+          updateOutputMessage(msg);
+        }
+      });
+      props.socket.on("message", function(msg) {
+        updateOutputMessage(msg);
+      });
+  
+      props.socket.on("start", function(msg) {
+        updateOutputMessage(msg);
+      });
+  
+      props.socket.on("player-move", function(msg) {
+        updateOutputMessage(msg);
+      });
+  
+      props.socket.on("disapprove", function(msg, a) {
+        updateOutputMessage(msg);
+      });
+  
+      props.socket.on("whatever", function(msg, a) {
+        updateOutputMessage(msg);
+      });
+  
+      props.socket.on("new-player", function(newPlayer) {
+        updateOutputMessage(newPlayer);
+      });
+  
+      props.socket.on("current-player", async tag => {
+        updateOutputMessage("It's " + tag + " turn!");
+      });
+    }
+  }, [player]);
 
   const getUpdatedPlayer = async playerName => {
     if (playerName) {
@@ -89,6 +96,10 @@ export const Console = props => {
     setSuspect(selectedOption.label);
   };
 
+  const handleRoomChange = selectedOption => {
+    setRoom(selectedOption.label);
+  };
+
   const handleWeaponChange = selectedOption => {
     setWeapon(selectedOption.label);
   };
@@ -97,24 +108,30 @@ export const Console = props => {
     const message =
       suspect + " is the murderer in the " + room + " room using a " + weapon;
     props.socket.emit(
-      "channel-message",
-      player + " (" + character + ")",
-      "Accusation",
+      "channel-accusation",
+      player + " (" + Suspect[character] + ")",
       message
     );
     const payload = {
       accused_character: unprettifyName(suspect),
-      accused_weapon: weapon,
-      accused_room: room
+      accused_weapon: weapon.toLowerCase(),
+      accused_room: room.toLowerCase()
     };
     const response = await ApiClient.put(
       "/player/accusation/" + player,
       payload
     );
     if (response.error === undefined) {
-      if (response.guess) {
-        props.socket.emit("channel-whatever", player + " WINS!");
-      }
+      props.socket.emit(
+        "channel-whatever",
+        player + (response.guess ? " WINS!" : " LOSES!")
+      );
+      props.socket.emit(
+        "channel-current-player",
+        response.current_player_info.player_name,
+        response.current_player_info.character_name,
+        Suspect[response.current_player_info.character_name]
+      );
     }
   };
 
@@ -122,9 +139,9 @@ export const Console = props => {
     const message =
       suspect + " is the murderer in the " + room + " room using a " + weapon;
     props.socket.emit(
-      "channel-message",
+      "channel-suggestion",
+      player,
       player + " (" + Suspect[character] + ")",
-      "Suggestion",
       message
     );
     const payload = {
@@ -195,8 +212,10 @@ export const Console = props => {
           placeholder={room}
           styles={customStyle}
           options={rooms.map(v => ({
-            label: Room[v]
+            label: Room[v],
+            value: v
           }))}
+          onChange={handleRoomChange}
         />
       </div>
       <div className="block">
@@ -219,10 +238,7 @@ export const Console = props => {
         >
           Suggest
         </button>
-        <button
-          className="accuse"
-          onClick={accuse}
-        >
+        <button className="accuse" onClick={accuse}>
           Accuse
         </button>
       </div>
