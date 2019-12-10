@@ -27,5 +27,7 @@ class Player:
         # Boolean flag to allow player to disapprove
         self.allow_disapproval = False
 
+        self.allow_move = False
+
     def move(self, room_or_hall):
         self.room_hall = room_or_hall

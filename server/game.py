@@ -78,7 +78,7 @@ class CluelessGame:
                                       'ballroom-kitchen'])
         self.rooms['kitchen'] = Room('kitchen', 'study', ['dining-kitchen', 'ballroom-kitchen']) 
 
-        self.hallways = HALLWAY_STATE
+        self.hallways = HALLWAY_STATE.copy()
         
         # Player dictionary -> key: player name, value: player properties
         # Using an ordered dict to preserve ordering of player registration
@@ -145,6 +145,7 @@ class CluelessGame:
 
         # The current player is the first registered player
         self.current_player = [*self.players.keys()][0]
+        [*self.players.values()][0].allow_move = True
         
         return
 
