@@ -21,6 +21,7 @@ class PlayerApi(Resource):
     # Get the player information base on the player's name
     def get(self, player_name):
         player = game.players.get(player_name)
+        print(player.character_name)
         location = player.room_hall
 
         if player.allow_move:
@@ -209,20 +210,23 @@ class DisproveSuggestionApi(Resource):
 
         # If player does not have the cards to disapprove, then proceed to the next player
         if args.card == "empty": 
-            game.players.get(game.current_player).allow_disapproval = False
             game.current_player = current_player.next_player
         else:
-            game.current_player = game.players.get(game.suggesting_player).next_player
+            if not game.players.get(game.suggesting_player).allow_move:
+                game.current_player = game.players.get(game.suggesting_player).next_player
 
-            if current_player.made_accusation:
-                game.current_player = current_player.next_player
-                
-            game.suggesting_player = None
-            game.players.get(game.current_player).allow_move = True
-            #game.player_moved = False
+                if current_player.made_accusation:
+                    game.current_player = current_player.next_player
+                    
+                game.suggesting_player = None
+                game.players.get(game.current_player).allow_move = True
+                #game.player_moved = False
 
-            for player in game.players.values():
-                player.allow_disapproval = False
+                for player in game.players.values():
+                    player.allow_disapproval = False
+            else:
+                game.current_player = game.suggesting_player
+                game.suggesting_player = None
 
         return jsonify(current_player_info=vars(game.players.get(game.current_player)))
 
