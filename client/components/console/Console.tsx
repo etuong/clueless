@@ -43,6 +43,10 @@ export const Console = props => {
       updateOutputMessage(msg);
     });
 
+    props.socket.on("whatever", function(msg, a) {
+      updateOutputMessage(msg);
+    });
+
     props.socket.on("new-player", function(newPlayer) {
       updateOutputMessage(newPlayer);
     });
@@ -89,7 +93,7 @@ export const Console = props => {
     setWeapon(selectedOption.label);
   };
 
-  const accuse = () => {
+  const accuse = async () => {
     const message =
       suspect + " is the murderer in the " + room + " room using a " + weapon;
     props.socket.emit(
@@ -98,6 +102,20 @@ export const Console = props => {
       "Accusation",
       message
     );
+    const payload = {
+      accused_character: unprettifyName(suspect),
+      accused_weapon: weapon,
+      accused_room: room
+    };
+    const response = await ApiClient.put(
+      "/player/accusation/" + player,
+      payload
+    );
+    if (response.error === undefined) {
+      if (response.guess) {
+        props.socket.emit("channel-whatever", player + " WINS!");
+      }
+    }
   };
 
   const suggest = async () => {
@@ -131,7 +149,8 @@ export const Console = props => {
       );
       props.socket.emit(
         "channel-disapprove",
-        response.current_player_info.player_name + ", if applicable, please click on a card to disapprove or click on the empty card to go on the next player",
+        response.current_player_info.player_name +
+          ", if applicable, please click on a card to disapprove or click on the empty card to go on the next player",
         response.current_player_info
       );
     }
@@ -194,7 +213,7 @@ export const Console = props => {
       </div>
       <div className={"announce " + (!readyToSuggestOrAccuse ? "disable" : "")}>
         <button
-          className="suggest"
+          className={"suggest " + (!readyToSuggestOrAccuse ? "disable" : "")}
           onClick={suggest}
           disabled={!readyToSuggestOrAccuse}
         >
@@ -203,7 +222,6 @@ export const Console = props => {
         <button
           className="accuse"
           onClick={accuse}
-          disabled={!readyToSuggestOrAccuse}
         >
           Accuse
         </button>

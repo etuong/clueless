@@ -85,6 +85,7 @@ class CluelessGame:
         self.players = OrderedDict()
 
         self.game_answer = self.create_game_answer()
+        print(self.game_answer)
         self.current_player = None
         self.suggesting_player = None
         self.game_started = False

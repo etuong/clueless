@@ -6,6 +6,10 @@ var currentCharacter = "";
 io.on("connection", function(socket) {
   console.log("User connected");
 
+  socket.on("channel-whatever", function(msg) {
+    io.emit("whatever", msg);
+  });
+
   socket.on("channel-message", function(from, action, msg) {
     const sentence = from + "'s " + action + ": " + msg;
     console.log(sentence);
