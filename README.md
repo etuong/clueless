@@ -1,15 +1,7 @@
-## Available Scripts
+This game is a simplified version of the popular board game, Clue, that supports online multi-players.
 
-In the project directory, you can run:
+Backend is done in Python using Flask with optional RabbitMQ. Make sure to `pip install` and run the server.
 
-### `npm start`
+Frontend is done using Typescript and React JS with webpack. Web sockets are used to broadcast messages. Run `yarn start` to start the app.
 
-Runs the app in the development mode in [http://localhost:3000](http://localhost:3000)<br>
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br>
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
+Tests are done using Jest. Run `yarn test`.
